@@ -1,0 +1,152 @@
+/* File: src/components/Marquee/marquee.css */
+
+.tech-marquee-container {
+  margin-top: 0;
+  position: relative;
+  z-index: 10;
+  background-color: var(--background-color, #ffffff);
+  box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.tech-marquee-section {
+  padding: 40px 0;
+}
+
+.marquee-heading {
+  color: var(--heading-color, #333333);
+  margin-bottom: 20px;
+}
+
+.marquee-wrapper {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.marquee-content {
+  display: flex;
+  width: fit-content;
+  animation: marquee 50s linear infinite;
+  animation-play-state: running;
+}
+
+.marquee-content:hover {
+  animation-play-state: paused;
+}
+
+.marquee-reverse {
+  animation-name: marquee-reverse;
+  animation-direction: reverse;
+}
+
+.tech-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 25px;
+  min-width: 120px;
+  color: var(--text-color, #555555);
+  transition: transform 0.2s ease;
+}
+
+.tech-item:hover {
+  transform: scale(1.1);
+}
+
+.tech-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tech-item span {
+  font-size: 14px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Fade edges */
+.marquee-wrapper::before,
+.marquee-wrapper::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 100px;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.marquee-wrapper::before {
+  left: 0;
+  background: linear-gradient(90deg, var(--background-color, #ffffff) 0%, transparent 100%);
+}
+
+.marquee-wrapper::after {
+  right: 0;
+  background: linear-gradient(90deg, transparent 0%, var(--background-color, #ffffff) 100%);
+}
+
+/* Animation keyframes */
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes marquee-reverse {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* Media queries for responsive behavior */
+@media (max-width: 768px) {
+  .tech-marquee-section {
+    padding: 30px 0;
+  }
+  
+  .tech-item {
+    min-width: 100px;
+    padding: 8px 16px;
+  }
+  
+  .tech-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 22px;
+  }
+  
+  .tech-item span {
+    font-size: 12px;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background-color: #121212;
+    --heading-color: #ffffff;
+    --text-color: #dddddd;
+  }
+  
+  .tech-icon {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+}
