@@ -8,159 +8,250 @@ import * as THREE from 'three';
 const InteractivePlayground = ({ onCursorChange }) => {
   const theme = useTheme();
   const canvasRef = useRef(null);
-  const controls = useAnimation();
+  const controls = useAnimation(); // For Framer Motion text animations
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.3,
   });
-  const [isHovering, setIsHovering] = useState(false);
 
-  // Start animations when component comes into view
+  // State for hover, managed by React for triggering cursor changes etc.
+  const [isHoveringState, setIsHoveringState] = useState(false);
+  // Ref for isHovering, to be used inside the animation loop to avoid stale closures
+  const isHoveringRef = useRef(isHoveringState);
+
+  useEffect(() => {
+    isHoveringRef.current = isHoveringState;
+  }, [isHoveringState]);
+
+  // Refs for Three.js objects and animation state mutable within useEffect
+  const meshRef = useRef(null);
+  const materialRef = useRef(null);
+  const geometriesRef = useRef([]);
+  const animationFrameIdRef = useRef(null);
+  const sceneRef = useRef(null);
+  const rendererRef = useRef(null);
+  const cameraRef = useRef(null);
+
+  const hasMorphedOnThisHoverRef = useRef(false);
+  const currentGeometryIndexRef = useRef(0);
+  const isMorphingCooldownRef = useRef(false); // Cooldown for the morph action itself
+
+  const playfulColorsContainerRef = useRef({
+    colors: [],
+    currentIndex: 0,
+  });
+  
+  const rotationStateRef = useRef({
+    baseSpeedZ: 0.003, // Base continuous spin speed
+    currentSpeedZ: 0.003,
+    speedBoostTimeoutId: null,
+  });
+
+  // Start Framer Motion animations when component comes into view
   useEffect(() => {
     if (inView) {
       controls.start('visible');
     }
   }, [controls, inView]);
 
-  // Three.js setup
+  // Three.js setup and animation loop
   useEffect(() => {
     if (!canvasRef.current) return;
 
+    const currentCanvas = canvasRef.current; 
+
     // Scene setup
     const scene = new THREE.Scene();
+    sceneRef.current = scene;
     
     // Camera setup
     const camera = new THREE.PerspectiveCamera(
       75, 
-      canvasRef.current.clientWidth / canvasRef.current.clientHeight, 
+      currentCanvas.clientWidth / currentCanvas.clientHeight, 
       0.1, 
       1000
     );
     camera.position.z = 5;
+    cameraRef.current = camera;
     
     // Renderer setup
     const renderer = new THREE.WebGLRenderer({ 
-      canvas: canvasRef.current,
+      canvas: currentCanvas,
       antialias: true,
       alpha: true,
     });
-    renderer.setSize(canvasRef.current.clientWidth, canvasRef.current.clientHeight);
+    renderer.setSize(currentCanvas.clientWidth, currentCanvas.clientHeight);
     renderer.setClearColor(0x000000, 0);
+    rendererRef.current = renderer;
     
-    // Create geometries
-    const geometries = [
-      new THREE.IcosahedronGeometry(1, 0), // Simplest form
-      new THREE.IcosahedronGeometry(1, 1), // Medium complexity
-      new THREE.IcosahedronGeometry(1, 2), // Most complex
+    // Dispose old geometries if effect re-runs
+    geometriesRef.current.forEach(g => g.dispose());
+    geometriesRef.current = [
+      new THREE.IcosahedronGeometry(1.2, 0), // Slightly larger, simplest
+      new THREE.IcosahedronGeometry(1.2, 1), // Medium complexity
+      new THREE.IcosahedronGeometry(1.2, 3), // Higher complexity
     ];
+    currentGeometryIndexRef.current = 0; 
     
-    // Create material with the theme's primary color
+    // Dispose old material if any
+    if (materialRef.current) materialRef.current.dispose(); 
+    const initialColor = new THREE.Color(theme.palette.primary.main);
+    const initialEmissive = new THREE.Color(theme.palette.primary.light);
+
     const material = new THREE.MeshStandardMaterial({
-      color: theme.palette.primary.main,
+      color: initialColor,
       wireframe: true,
-      emissive: theme.palette.primary.light,
-      emissiveIntensity: 0.3,
+      emissive: initialEmissive,
+      emissiveIntensity: 0.4, // Slightly more glow
     });
+    materialRef.current = material;
     
-    // Create mesh with initial geometry
-    const mesh = new THREE.Mesh(geometries[0], material);
+    // Initialize playful colors
+    playfulColorsContainerRef.current.colors = [
+        { color: initialColor.clone(), emissive: initialEmissive.clone() },
+        { color: new THREE.Color('#FF69B4'), emissive: new THREE.Color('#FFC0CB') }, // Hot Pink, Light Pink emissive
+        { color: new THREE.Color('#00FFFF'), emissive: new THREE.Color('#AFEEEE') }, // Cyan, Pale Turquoise emissive
+        { color: new THREE.Color('#7FFF00'), emissive: new THREE.Color('#98FB98') }, // Chartreuse, Pale Green emissive
+        { color: new THREE.Color('#FFD700'), emissive: new THREE.Color('#FAFAD2') }, // Gold, Light Goldenrod Yellow emissive
+        { color: new THREE.Color('#9370DB'), emissive: new THREE.Color('#E6E6FA') }, // Medium Purple, Lavender emissive
+    ];
+    playfulColorsContainerRef.current.currentIndex = 0;
+
+    if (meshRef.current) {
+        scene.remove(meshRef.current); // Remove old mesh if effect re-runs
+    }
+    const mesh = new THREE.Mesh(geometriesRef.current[currentGeometryIndexRef.current], material);
     scene.add(mesh);
+    meshRef.current = mesh;
     
-    // Add ambient light
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6); 
     scene.add(ambientLight);
     
-    // Add directional light
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-    directionalLight.position.set(2, 2, 5);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1.2); 
+    directionalLight.position.set(2.5, 2.5, 5);
     scene.add(directionalLight);
     
-    // Mouse movement tracking
     let mouseX = 0;
     let mouseY = 0;
     let targetX = 0;
     let targetY = 0;
     
-    const windowHalfX = window.innerWidth / 2;
-    const windowHalfY = window.innerHeight / 2;
-    
     const handleMouseMove = (event) => {
-      mouseX = (event.clientX - windowHalfX) / 100;
-      mouseY = (event.clientY - windowHalfY) / 100;
+      // Normalize mouse position to -1 to 1 range based on window center
+      const windowHalfX = window.innerWidth / 2;
+      const windowHalfY = window.innerHeight / 2;
+      mouseX = (event.clientX - windowHalfX) / windowHalfX;
+      mouseY = (event.clientY - windowHalfY) / windowHalfY;
     };
-    
-    window.addEventListener('mousemove', handleMouseMove);
-    
-    // Animation loop
-    let geometryIndex = 0;
-    let morphClock = 0;
-    let isMorphing = false;
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
     
     const animate = () => {
-      requestAnimationFrame(animate);
+      animationFrameIdRef.current = requestAnimationFrame(animate);
       
-      // Smooth rotation based on mouse position
-      targetX = mouseX * 0.2;
-      targetY = mouseY * 0.2;
+      if (!meshRef.current || !materialRef.current || !rendererRef.current || !sceneRef.current || !cameraRef.current ) return;
+
+      targetX = mouseX * 0.4; // Mouse influence on X rotation
+      targetY = mouseY * 0.4; // Mouse influence on Y rotation
       
-      mesh.rotation.y += 0.05 * (targetX - mesh.rotation.y);
-      mesh.rotation.x += 0.05 * (targetY - mesh.rotation.x);
+      meshRef.current.rotation.y += 0.03 * (targetX - meshRef.current.rotation.y); // Smooth Y rotation
+      meshRef.current.rotation.x += 0.03 * (targetY - meshRef.current.rotation.x); // Smooth X rotation
+      meshRef.current.rotation.z += rotationStateRef.current.currentSpeedZ; // Continuous Z rotation
       
-      // Constantly spinning (slow)
-      mesh.rotation.z += 0.005;
-      
-      // If user is hovering, morph to the next geometry
-      if (isHovering && !isMorphing) {
-        isMorphing = true;
-        morphClock = 0;
+      if (isHoveringRef.current && !isMorphingCooldownRef.current && !hasMorphedOnThisHoverRef.current) {
+        isMorphingCooldownRef.current = true;
+        hasMorphedOnThisHoverRef.current = true;
         
-        // Change to the next geometry
-        geometryIndex = (geometryIndex + 1) % geometries.length;
-        mesh.geometry = geometries[geometryIndex];
+        currentGeometryIndexRef.current = (currentGeometryIndexRef.current + 1) % geometriesRef.current.length;
+        meshRef.current.geometry = geometriesRef.current[currentGeometryIndexRef.current];
         
-        // Reset morphing after a delay
         setTimeout(() => {
-          isMorphing = false;
-        }, 1000);
+          isMorphingCooldownRef.current = false; 
+        }, 600); // Morph cooldown
       }
       
-      renderer.render(scene, camera);
+      rendererRef.current.render(sceneRef.current, cameraRef.current);
     };
     
     animate();
     
-    // Handle window resize
     const handleResize = () => {
-      if (!canvasRef.current) return;
+      if (!currentCanvas || !cameraRef.current || !rendererRef.current) return;
       
-      camera.aspect = canvasRef.current.clientWidth / canvasRef.current.clientHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(canvasRef.current.clientWidth, canvasRef.current.clientHeight);
+      cameraRef.current.aspect = currentCanvas.clientWidth / currentCanvas.clientHeight;
+      cameraRef.current.updateProjectionMatrix();
+      rendererRef.current.setSize(currentCanvas.clientWidth, currentCanvas.clientHeight);
     };
-    
     window.addEventListener('resize', handleResize);
     
-    // Cleanup
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('resize', handleResize);
+      if (animationFrameIdRef.current) {
+        cancelAnimationFrame(animationFrameIdRef.current);
+      }
+      if (rotationStateRef.current.speedBoostTimeoutId) {
+          clearTimeout(rotationStateRef.current.speedBoostTimeoutId);
+      }
       
-      // Dispose resources
-      geometries.forEach(geometry => geometry.dispose());
-      material.dispose();
-      renderer.dispose();
+      geometriesRef.current.forEach(geometry => geometry.dispose());
+      geometriesRef.current = [];
+
+      if (materialRef.current) {
+        materialRef.current.dispose();
+        materialRef.current = null;
+      }
+      if (meshRef.current && sceneRef.current) {
+        sceneRef.current.remove(meshRef.current);
+        meshRef.current = null;
+      }
+      if (rendererRef.current) {
+        rendererRef.current.dispose();
+        rendererRef.current = null;
+      }
+      sceneRef.current = null;
+      cameraRef.current = null;
     };
-  }, [canvasRef, isHovering, theme.palette.primary]);
+  }, [theme.palette.primary.main, theme.palette.primary.light]);
+
+
+  const handleMouseEnter = () => {
+    setIsHoveringState(true);
+    onCursorChange('interactive');
+    hasMorphedOnThisHoverRef.current = false; 
+  };
+
+  const handleMouseLeave = () => {
+    setIsHoveringState(false);
+    onCursorChange('default');
+  };
+
+  const handleClick = () => {
+    if (!meshRef.current || !materialRef.current || !playfulColorsContainerRef.current.colors.length) return;
+
+    const colorsContainer = playfulColorsContainerRef.current;
+    colorsContainer.currentIndex = (colorsContainer.currentIndex + 1) % colorsContainer.colors.length;
+    const newColorTheme = colorsContainer.colors[colorsContainer.currentIndex];
+    
+    materialRef.current.color.set(newColorTheme.color);
+    materialRef.current.emissive.set(newColorTheme.emissive);
+
+    const rotationState = rotationStateRef.current;
+    rotationState.currentSpeedZ = rotationState.baseSpeedZ * 12; // Speed boost
+    
+    if (rotationState.speedBoostTimeoutId) {
+        clearTimeout(rotationState.speedBoostTimeoutId);
+    }
+    rotationState.speedBoostTimeoutId = setTimeout(() => {
+        rotationState.currentSpeedZ = rotationState.baseSpeedZ; // Reset to base speed
+    }, 750); // Boost duration
+  };
 
   const headerVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: {
-        duration: 0.6,
-        ease: "easeOut",
-      },
+      transition: { duration: 0.6, ease: "easeOut" },
     },
   };
 
@@ -168,81 +259,87 @@ const InteractivePlayground = ({ onCursorChange }) => {
     <Box 
       ref={ref}
       sx={{ 
-        py: 10,
+        py: { xs: 3, md: 2 }, 
         position: 'relative',
         overflow: 'hidden',
+        minHeight: { xs: 320, sm: 350, md: 400 },
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
       }}
     >
-      <Container >
+      <Container sx={{ textAlign: 'center', mb: 2, mt: {xs: 2, md: 0} }}>
         <motion.div
-          variants={headerVariants}
-          initial="hidden"
-          animate={controls}
+         variants={headerVariants}
+         initial="hidden"
+         animate={controls}
         >
-          <Typography 
+         <Typography 
             variant="h2" 
             align="center" 
             gutterBottom
             sx={{ 
               fontWeight: 700,
-              mb: 2,
+              mb: 1,
+              fontSize: { xs: '1.8rem', sm: '2.2rem', md: '2.75rem' }
             }}
-          >
-            Play With Us
-          </Typography>
-          <Typography 
+         >
+            Reach out to us and let’s create something amazing together!
+         </Typography>
+         <Typography 
             variant="h6" 
             align="center" 
             color="textSecondary"
             sx={{ 
               maxWidth: 600,
               mx: 'auto',
-              mb: 5,
+              fontSize: { xs: '0.85rem', sm: '0.95rem', md: '1.05rem' }
             }}
-          >
-            Hover over the shape to see it transform
-          </Typography>
+         >
+            {/* Hover to transform, click to splash color & speed! */}
+         </Typography>
         </motion.div>
-
-        <Box 
-          sx={{ 
-            display: 'flex',
-            justifyContent: 'center',
-            position: 'relative',
-            height: 400,
-          }}
-        >
-          <Box
-            sx={{
-              position: 'relative',
-              width: '100%',
-              maxWidth: 500,
-              height: 400,
-            }}
-            onMouseEnter={() => {
-              setIsHovering(true);
-              onCursorChange('interactive');
-            }}
-            onMouseLeave={() => {
-              setIsHovering(false);
-              onCursorChange('default');
-            }}
-          >
-            <motion.canvas
-              ref={canvasRef}
-              initial={{ opacity: 0 }}
-              animate={{ 
-                opacity: 1,
-                transition: { duration: 1 } 
-              }}
-              style={{
-                width: '100%',
-                height: '100%',
-              }}
-            />
-          </Box>
-        </Box>
       </Container>
+
+      <Box 
+        sx={{ 
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          position: 'relative',
+          width: '100%', 
+          height: { xs: 200, sm: 220, md: 250 }, 
+        }}
+      >
+        <Box
+          sx={{
+            position: 'relative',
+            width: '100%',
+            maxWidth: { xs: 280, sm: 350, md: 400 }, 
+            height: '100%', 
+            cursor: isHoveringState ? 'pointer' : 'default',
+          }}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          onClick={handleClick} 
+        >
+          <motion.canvas
+            ref={canvasRef}
+            initial={{ opacity: 0, scale: 0.7 }}
+            animate={{ 
+              opacity: 1,
+              scale: 1,
+              transition: { duration: 0.8, delay: 0.2, ease: "easeOut" } 
+            }}
+            style={{
+              width: '100%',
+              height: '100%',
+              display: 'block', 
+            }}
+          />
+        </Box>
+      </Box>
     </Box>
   );
 };

@@ -130,7 +130,7 @@ const ServicesSection = ({ onCursorChange }) => {
         <Box
             id="services"
             sx={{
-                py: 10,
+                py: 5,
             }}
             ref={ref}
         >
