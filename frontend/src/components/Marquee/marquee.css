@@ -4,8 +4,8 @@
   margin-top: 0;
   position: relative;
   z-index: 10;
-  background-color: var(--background-color, #ffffff);
-  box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.05);
+  /* Background removed - using global background */
+  box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.3);
   overflow: hidden;
 }
 
@@ -14,7 +14,7 @@
 }
 
 .marquee-heading {
-  color: var(--heading-color, #333333);
+  color: #ffffff;
   margin-bottom: 20px;
 }
 
@@ -31,7 +31,7 @@
   animation-play-state: running;
 }
 
-.marquee-content:hover {
+.marquee-content:hover { 
   animation-play-state: paused;
 }
 
@@ -47,7 +47,7 @@
   justify-content: center;
   padding: 10px 25px;
   min-width: 120px;
-  color: var(--text-color, #555555);
+  color: #cccccc;
   transition: transform 0.2s ease;
 }
 
@@ -64,9 +64,9 @@
   font-size: 28px;
   font-weight: bold;
   margin-bottom: 10px;
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.1);
   border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .tech-item span {
@@ -89,12 +89,12 @@
 
 .marquee-wrapper::before {
   left: 0;
-  background: linear-gradient(90deg, var(--background-color, #ffffff) 0%, transparent 100%);
+  background: linear-gradient(90deg, transparent 0%, transparent 100%);
 }
 
 .marquee-wrapper::after {
   right: 0;
-  background: linear-gradient(90deg, transparent 0%, var(--background-color, #ffffff) 100%);
+  background: linear-gradient(90deg, transparent 0%, transparent 100%);
 }
 
 /* Animation keyframes */
@@ -135,18 +135,5 @@
   
   .tech-item span {
     font-size: 12px;
-  }
-}
-
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background-color: #121212;
-    --heading-color: #ffffff;
-    --text-color: #dddddd;
-  }
-  
-  .tech-icon {
-    background-color: rgba(255, 255, 255, 0.1);
   }
 }

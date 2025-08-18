@@ -1,0 +1,246 @@
+/* GooeyNav Component Styles */
+:root {
+  --linear-ease: linear(0, 0.068, 0.19 2.7%, 0.804 8.1%, 1.037, 1.199 13.2%, 1.245, 1.27 15.8%, 1.274, 1.272 17.4%, 1.249 19.1%, 0.996 28%, 0.949, 0.928 33.3%, 0.926, 0.933 36.8%, 1.001 45.6%, 1.013, 1.019 50.8%, 1.018 54.4%, 1 63.1%, 0.995 68%, 1.001 85%, 1);
+}
+
+.gooey-nav-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.gooey-nav-nav {
+  display: flex;
+  position: relative;
+  transform: translate3d(0,0,0.01px);
+}
+
+.gooey-nav-ul {
+  display: flex;
+  gap: 1.5rem; /* Reduced gap to fit better in navbar */
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  position: relative;
+  z-index: 3;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3); /* Reduced text shadow */
+  align-items: center;
+}
+
+.gooey-nav-li {
+  border-radius: 25px; /* Slightly reduced border radius */
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: none; /* Remove any default shadows */
+  color: white;
+  padding: 0.3rem 0; /* Reduced padding to fit better */
+}
+
+.gooey-nav-li:hover {
+  transform: translateY(-1px); /* Reduced movement for subtlety */
+  box-shadow: none; /* Remove shadow on hover */
+}
+
+.gooey-nav-li.active {
+  color: black !important;
+  text-shadow: none;
+  box-shadow: none; /* Remove any shadow effects */
+}
+
+.gooey-nav-li.active:hover {
+  transform: none; /* No movement when active button is hovered */
+  box-shadow: none;
+}
+
+.gooey-nav-li.active::after {
+  opacity: 1;
+  transform: scale(1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: 25px; /* Ensure consistent border radius */
+}
+
+.gooey-nav-li::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 25px; /* Ensure consistent border radius */
+  background: white;
+  opacity: 0;
+  transform: scale(0);
+  transition: all 0.3s ease;
+  z-index: -1;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.gooey-nav-a {
+  outline: none;
+  padding: 0.5em 1em; /* Reduced padding to fit better */
+  display: inline-block;
+  text-decoration: none;
+  color: inherit;
+  font-weight: 500;
+  font-size: 0.95rem; /* Slightly smaller font size */
+  white-space: nowrap;
+  transition: all 0.3s ease;
+}
+
+.gooey-nav-a:hover {
+  color: #4299e1; /* Brand color on hover */
+}
+
+.gooey-nav-effect {
+  position: absolute;
+  opacity: 1;
+  pointer-events: none;
+  display: grid;
+  place-items: center;
+  z-index: 1;
+}
+
+.gooey-nav-effect.text {
+  color: white;
+  transition: color 0.3s ease;
+}
+
+.gooey-nav-effect.text.active {
+  color: black;
+}
+
+.gooey-nav-effect.filter {
+  filter: blur(3px) contrast(100) blur(0); /* Reduced blur from 7px to 3px for crisper effect */
+  mix-blend-mode: lighten;
+  box-shadow: none;
+  filter: blur(3px) contrast(100) blur(0) drop-shadow(0 0 0 transparent);
+}
+
+.gooey-nav-effect.filter::before {
+  content: "";
+  position: absolute;
+  inset: -3px; /* Reduced from -75px to -40px for tighter effect radius */
+  z-index: -2;
+  background: black;
+  box-shadow: none;
+}
+
+.gooey-nav-effect.filter::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: white;
+  transform: scale(0);
+  opacity: 0;
+  z-index: -1;
+  border-radius: 9999px;
+  box-shadow: none;
+}
+
+.gooey-nav-effect.active::after {
+  animation: gooey-pill 0.3s ease both;
+  box-shadow: none; /* Ensure no shadows during animation */
+}
+
+@keyframes gooey-pill {
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.gooey-nav-particle,
+.gooey-nav-point {
+  display: block;
+  opacity: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 9999px;
+  transform-origin: center;
+}
+
+.gooey-nav-particle {
+  --time: 5s;
+  position: absolute;
+  top: calc(50% - 8px);
+  left: calc(50% - 8px);
+  animation: gooey-particle calc(var(--time)) ease 1 -350ms;
+  box-shadow: none; /* Remove any shadows */
+}
+
+.gooey-nav-point {
+  background: var(--color);
+  opacity: 1;
+  animation: gooey-point calc(var(--time)) ease 1 -350ms;
+  box-shadow: none; /* Remove any shadows */
+}
+
+@keyframes gooey-particle {
+  0% {
+    transform: rotate(0deg) translate(calc(var(--start-x)), calc(var(--start-y)));
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
+  }
+  70% {
+    transform: rotate(calc(var(--rotate) * 0.5)) translate(calc(var(--end-x) * 1.1), calc(var(--end-y) * 1.1)); /* Reduced from 1.2 to 1.1 for tighter radius */
+    opacity: 1;
+    animation-timing-function: ease;
+  }
+  85% {
+    transform: rotate(calc(var(--rotate) * 0.66)) translate(calc(var(--end-x)), calc(var(--end-y)));
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(calc(var(--rotate) * 1.2)) translate(calc(var(--end-x) * 0.6), calc(var(--end-y) * 0.6)); /* Reduced from 0.5 to 0.6 for tighter radius */
+    opacity: 1;
+  }
+}
+
+@keyframes gooey-point {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+    animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
+  }
+  25% {
+    transform: scale(calc(var(--scale) * 0.25));
+  }
+  38% {
+    opacity: 1;
+  }
+  65% {
+    transform: scale(var(--scale));
+    opacity: 1;
+    animation-timing-function: ease;
+  }
+  85% {
+    transform: scale(var(--scale));
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 1200px) {
+  .gooey-nav-ul {
+    gap: 1rem;
+  }
+  
+  .gooey-nav-a {
+    padding: 0.4em 0.8em;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .gooey-nav-ul {
+    gap: 0.8rem;
+  }
+  
+  .gooey-nav-a {
+    padding: 0.3em 0.6em;
+    font-size: 0.85rem;
+  }
+} 

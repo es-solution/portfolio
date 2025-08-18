@@ -1,6 +1,7 @@
 // File: src/components/Marquee/MarqueeComponent.jsx
 import { useEffect, useRef, memo } from 'react';
 import { Box, Typography, Container } from '@mui/material';
+import ScrollFloat from '../ScrollFloat';
 import './marquee.css';
 
 // Technology data
@@ -31,9 +32,9 @@ const frameworks = [
 // Icon mapping - simplified first letter icons but you can replace with actual icons
 const getIconComponent = (iconClass, color) => {
   return (
-    <i 
-      className={iconClass + ' tech-icon'} 
-      style={{ color , display:'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem' }}
+    <i
+      className={iconClass + ' tech-icon'}
+      style={{ color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem' }}
       aria-hidden="true"
     ></i>
   );
@@ -54,7 +55,7 @@ const MarqueeComponent = ({ onCursorChange }) => {
     };
 
     initMarquee();
-    
+
     // Cleanup function not needed for CSS animations
   }, []);
 
@@ -63,18 +64,24 @@ const MarqueeComponent = ({ onCursorChange }) => {
       {/* Languages Marquee */}
       <div className="tech-marquee-section">
         <Container maxWidth="lg">
-          <Typography 
-            variant="h4" 
-            className="marquee-heading"
-            sx={{ mb: 3, fontWeight: 600, textAlign: 'center' }}
-          >
-            Languages We Work With
-          </Typography>
+          <Box sx={{ textAlign: 'center', mb: 3 }}>
+            <ScrollFloat
+              animationDuration={2}
+              ease='back.inOut(1.5)'
+              scrollStart='center bottom+=30%'
+              scrollEnd='bottom bottom-=60%'
+              stagger={0.15}
+              containerClassName="marquee-heading-large"
+              textClassName="font-bold text-white"
+            >
+              Languages We Work With
+            </ScrollFloat>
+          </Box>
         </Container>
-        
+
         <div className="marquee-wrapper">
-          <div 
-            className="marquee-content" 
+          <div
+            className="marquee-content"
             ref={techMarqueeRef}
             onMouseEnter={() => onCursorChange('interactive')}
             onMouseLeave={() => onCursorChange('default')}
@@ -86,7 +93,7 @@ const MarqueeComponent = ({ onCursorChange }) => {
                 <span>{tech.name}</span>
               </div>
             ))}
-            
+
             {/* Duplicate for continuous loop */}
             {technologies.map((tech, index) => (
               <div className="tech-item" key={`tech-dup-${index}`}>
@@ -101,18 +108,24 @@ const MarqueeComponent = ({ onCursorChange }) => {
       {/* Frameworks Marquee - Reverse Direction */}
       <div className="tech-marquee-section">
         <Container maxWidth="lg">
-          <Typography 
-            variant="h4" 
-            className="marquee-heading"
-            sx={{ mb: 3, fontWeight: 600, textAlign: 'center' }}
-          >
-            Frameworks We Work With
-          </Typography>
+          <Box sx={{ textAlign: 'center', mb: 3 }}>
+            <ScrollFloat
+              animationDuration={2}
+              ease='back.inOut(1.5)'
+              scrollStart='center bottom+=30%'
+              scrollEnd='bottom bottom-=60%'
+              stagger={0.15}
+              containerClassName="marquee-heading-large"
+              textClassName="font-bold text-white"
+            >
+              Frameworks We Work With
+            </ScrollFloat>
+          </Box>
         </Container>
-        
+
         <div className="marquee-wrapper">
-          <div 
-            className="marquee-content marquee-reverse" 
+          <div
+            className="marquee-content marquee-reverse"
             ref={frameworkMarqueeRef}
             onMouseEnter={() => onCursorChange('interactive')}
             onMouseLeave={() => onCursorChange('default')}
@@ -124,7 +137,7 @@ const MarqueeComponent = ({ onCursorChange }) => {
                 <span>{framework.name}</span>
               </div>
             ))}
-            
+
             {/* Duplicate for continuous loop */}
             {frameworks.map((framework, index) => (
               <div className="tech-item" key={`framework-dup-${index}`}>

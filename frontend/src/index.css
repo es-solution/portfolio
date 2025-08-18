@@ -1,0 +1,137 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global dark background */
+html, body, #root {
+  background-color: #000000 !important;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'League Spartan', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* GooeyNav particle colors */
+:root {
+  --color-1: #4299e1;  /* Blue */
+  --color-2: #00ffff;  /* Cyan */
+  --color-3: #9370db;  /* Purple */
+  --color-4: #ffffff;  /* White */
+}
+
+/* SplitText animations */
+.split-parent {
+  overflow: visible !important;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+}
+
+.split-parent * {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.split-line {
+  overflow: hidden;
+  display: block;
+}
+
+/* Prevent text selection during animation */
+.split-parent.animating {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Ensure proper text rendering for gradients */
+.gradient-text {
+  background: linear-gradient(45deg, #4299e1 0%, #1a365d 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ScrollFloat animations */
+.marquee-heading {
+  font-family: 'League Spartan', sans-serif !important;
+  font-weight: 600 !important;
+  color: #ffffff !important;
+  text-align: center !important;
+}
+
+.marquee-heading .inline-block {
+  font-family: inherit;
+  font-weight: inherit;
+  color: inherit;
+}
+
+.marquee-heading-large {
+  font-family: 'League Spartan', sans-serif !important;
+  font-weight: 800 !important;
+  color: #ffffff !important;
+  text-align: center !important;
+}
+
+.marquee-heading-large .inline-block {
+  font-family: inherit;
+  font-weight: inherit;
+  color: inherit;
+}
+
+.marquee-heading-large span {
+  font-size: clamp(2.5rem, 6vw, 4rem) !important;
+  line-height: 1.2 !important;
+}
+
+/* ScrollFloat character styling */
+.scroll-float-char {
+  display: inline-block;
+  transform-origin: 50% 0%;
+}
+
+/* Debug styles for ScrollFloat */
+.marquee-heading-large .inline-block,
+.marquee-heading .inline-block {
+  display: inline-block !important;
+  transform-origin: 50% 0% !important;
+}
+
+/* Shine animation */
+@keyframes shine {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.shiny-text {
+  color: #b5b5b5;
+  position: relative;
+  display: inline-block;
+  background: linear-gradient(
+    120deg,
+    #b5b5b5 0%,
+    #b5b5b5 40%,
+    #ffffff 50%,
+    #b5b5b5 60%,
+    #b5b5b5 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.shiny-text.animate-shine {
+  animation: shine var(--animation-duration, 5s) linear infinite;
+}

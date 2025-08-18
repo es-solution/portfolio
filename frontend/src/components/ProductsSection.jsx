@@ -82,10 +82,7 @@ const ProductsSection = ({ onCursorChange }) => {
       id="products"
       sx={{ 
         py: 10,
-        backgroundColor: (theme) => 
-          theme.palette.mode === 'light' 
-            ? 'rgba(240, 249, 255, 0.6)' 
-            : 'rgba(10, 25, 41, 0.6)',
+        // Background removed - using global background
       }}
       ref={ref}
     >

@@ -57,9 +57,7 @@ const Footer = ({ onCursorChange }) => {
     <Box 
       component="footer" 
       sx={{ 
-        backgroundColor: theme.palette.mode === 'light' 
-          ? 'rgba(240, 249, 255, 0.8)' 
-          : 'rgba(10, 25, 41, 0.8)',
+        // Background removed - using global background
         py: 6,
       }}
     >

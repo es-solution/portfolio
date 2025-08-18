@@ -175,7 +175,7 @@ const ServicesSection = ({ onCursorChange }) => {
                             <div style={{display:'flex', alignItems:'center', justifyContent:'center'}} item xs={12} sm={6} md={4} key={index}>
                                 <motion.div variants={itemVariants}>
                                     <Card
-                                        elevation={theme.palette.mode === 'light' ? 1 : 3}
+                                        elevation={1}
                                         sx={{
                                             height: 300,
                                             width: 300,

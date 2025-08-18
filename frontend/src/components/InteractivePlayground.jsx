@@ -4,6 +4,7 @@ import { Box, Container, Typography, useTheme } from '@mui/material';
 import { motion, useAnimation } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import * as THREE from 'three';
+import LightRays from './LightRays';
 
 const InteractivePlayground = ({ onCursorChange }) => {
   const theme = useTheme();
@@ -188,6 +189,7 @@ const InteractivePlayground = ({ onCursorChange }) => {
       window.removeEventListener('resize', handleResize);
       if (animationFrameIdRef.current) {
         cancelAnimationFrame(animationFrameIdRef.current);
+        animationFrameIdRef.current = null;
       }
       if (rotationStateRef.current.speedBoostTimeoutId) {
           clearTimeout(rotationStateRef.current.speedBoostTimeoutId);
@@ -269,7 +271,35 @@ const InteractivePlayground = ({ onCursorChange }) => {
         alignItems: 'center',
       }}
     >
-      <Container sx={{ textAlign: 'center', mb: 2, mt: {xs: 2, md: 0} }}>
+      {/* LightRays Background Effect */}
+      <Box
+        sx={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          zIndex: 1,
+        }}
+      >
+        <LightRays
+          raysOrigin="top-center"
+          raysColor="#ffffff"
+          raysSpeed={1}
+          lightSpread={0.5}
+          rayLength={3}
+          fadeDistance={1}
+          saturation={1}
+          followMouse={true}
+          mouseInfluence={0.1}
+          noiseAmount={0}
+          distortion={0}
+          className="custom-rays"
+        />
+      </Box>
+
+      <Container sx={{ textAlign: 'center', mb: 2, mt: {xs: 2, md: 0}, position: 'relative', zIndex: 2 }}>
+
         <motion.div
          variants={headerVariants}
          initial="hidden"
@@ -285,7 +315,7 @@ const InteractivePlayground = ({ onCursorChange }) => {
               fontSize: { xs: '1.8rem', sm: '2.2rem', md: '2.75rem' }
             }}
          >
-            Reach out to us and let’s create something amazing together!
+            Reach out to us and let's create something amazing together!
          </Typography>
          <Typography 
             variant="h6" 
@@ -310,6 +340,7 @@ const InteractivePlayground = ({ onCursorChange }) => {
           position: 'relative',
           width: '100%', 
           height: { xs: 200, sm: 220, md: 250 }, 
+          zIndex: 2,
         }}
       >
         <Box

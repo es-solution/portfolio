@@ -67,7 +67,7 @@ const PageLoader = () => {
             height: 4,
             backgroundColor: '#4299e1',
             position: 'absolute',
-            top: 0,
+            top: 0,  
             left: 0,
             borderRadius: 2,
           }}

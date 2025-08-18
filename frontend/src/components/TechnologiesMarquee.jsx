@@ -60,10 +60,7 @@ const TechItem = memo(({ tech, onCursorChange }) => {
           justifyContent: 'center',
           mb: 1,
           borderRadius: '16px',
-          backgroundColor: (theme) => 
-            theme.palette.mode === 'light' 
-              ? 'rgba(255, 255, 255, 0.8)' 
-              : 'rgba(30, 41, 59, 0.8)',
+          backgroundColor: 'rgba(255, 255, 255, 0.8)', // Single white background
           boxShadow: 1, // Reduced shadow for better performance
           transition: 'transform 0.2s', // Move transition here for better performance
         }}
@@ -120,10 +117,7 @@ const TechnologiesMarquee = ({ onCursorChange }) => {
       id="technologies"
       sx={{ 
         py: 10,
-        backgroundColor: (theme) => 
-          theme.palette.mode === 'light' 
-            ? 'rgba(240, 249, 255, 0.6)' 
-            : 'rgba(10, 25, 41, 0.6)',
+        // Background removed - using global background
       }}
       ref={ref}
     >

@@ -17,28 +17,15 @@ const CustomCursor = lazy(() => import('./components/CustomCursor'));
 const InteractivePlayground = lazy(() => import('./components/InteractivePlayground'));
 const PageLoader = lazy(() => import('./components/PageLoader'));
 
-// import Navbar from './components/Navbar';
-// import HeroSection from './components/HeroSection';
-// import TechnologiesMarquee from './components/TechnologiesMarquee';
-// import FrameworksMarquee from './components/FrameworksMarquee';
-// import ServicesSection from './components/ServicesSection';
-// import ProductsSection from './components/ProductsSection';
-// import ContactSection from './components/ContactSection';
-// import Footer from './components/Footer';
-// import CustomCursor from './components/CustomCursor';
-// import InteractivePlayground from './components/InteractivePlayground';
-// import PageLoader from './components/PageLoader';
-
 function App() {
   const [loading, setLoading] = useState(true);
-  const [themeMode, setThemeMode] = useState('light');
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
   const [cursorType, setCursorType] = useState('default');
 
-  // Create theme based on mode
+  // Create single theme without light/dark mode
   const theme = createTheme({
     palette: {
-      mode: themeMode,
+      mode: 'light',
       primary: {
         main: '#4299e1', // Blue from the logo
       },
@@ -46,27 +33,31 @@ function App() {
         main: '#1a365d', // Navy from the logo background
       },
       background: {
-        default: themeMode === 'light' ? '#ffffff' : '#121212',
-        paper: themeMode === 'light' ? '#f7fafc' : '#1e1e1e',
+        default: 'transparent', // Transparent - using global background
+        paper: 'transparent', // Transparent - using global background
       },
       text: {
-        primary: themeMode === 'light' ? '#1a202c' : '#f7fafc',
-        secondary: themeMode === 'light' ? '#4a5568' : '#a0aec0',
+        primary: '#ffffff', // White text for dark background
+        secondary: '#cccccc', // Light gray text
       },
     },
     typography: {
-      fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+      fontFamily: '"League Spartan", "Roboto", "Helvetica", "Arial", sans-serif',
       h1: {
+        fontWeight: 800,
+        fontSize: '5rem',
+      },
+      h2: {
         fontWeight: 700,
         fontSize: '3.5rem',
       },
-      h2: {
+      h3: {
         fontWeight: 600,
         fontSize: '2.75rem',
       },
-      h3: {
-        fontWeight: 600,
-        fontSize: '2.25rem',
+      h4: {
+        fontWeight: 500,
+        fontSize: '2rem',
       },
     },
     components: {
@@ -102,11 +93,6 @@ function App() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Toggle theme mode
-  const toggleTheme = () => {
-    setThemeMode(prevMode => prevMode === 'light' ? 'dark' : 'light');
-  };
-
   // Handle cursor type change based on elements hovered
   const handleCursorChange = (type) => {
     setCursorType(type);
@@ -119,19 +105,27 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      {/* <CustomCursor position={cursorPosition} type={cursorType} /> */}
-      <Suspense fallback={<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}><CircularProgress /></Box>}>
-        <Navbar toggleTheme={toggleTheme} themeMode={themeMode} onCursorChange={handleCursorChange} />
-        <HeroSection onCursorChange={handleCursorChange} />
-         <MarqueeSection onCursorChange={handleCursorChange} />
-        {/* <TechnologiesMarquee onCursorChange={handleCursorChange} /> */}
-        <ServicesSection onCursorChange={handleCursorChange} />
-        {/* <FrameworksMarquee onCursorChange={handleCursorChange} /> */}
-        <InteractivePlayground onCursorChange={handleCursorChange} />
-        <ProductsSection onCursorChange={handleCursorChange} />
-        <ContactSection onCursorChange={handleCursorChange} />
-        <Footer onCursorChange={handleCursorChange} />
-      </Suspense>
+      <Box
+        sx={{
+          backgroundColor: '#000000',
+          minHeight: '100vh',
+          width: '100%',
+        }}
+      >
+        {/* <CustomCursor position={cursorPosition} type={cursorType} /> */}
+        <Suspense fallback={<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}><CircularProgress /></Box>}>
+          <Navbar onCursorChange={handleCursorChange} />
+          <HeroSection onCursorChange={handleCursorChange} />
+           <MarqueeSection onCursorChange={handleCursorChange} />
+          {/* <TechnologiesMarquee onCursorChange={handleCursorChange} /> */}
+          <ServicesSection onCursorChange={handleCursorChange} />
+          {/* <FrameworksMarquee onCursorChange={handleCursorChange} /> */}
+          <InteractivePlayground onCursorChange={handleCursorChange} />
+          <ProductsSection onCursorChange={handleCursorChange} />
+          <ContactSection onCursorChange={handleCursorChange} />
+          <Footer onCursorChange={handleCursorChange} />
+        </Suspense>
+      </Box>
     </ThemeProvider>
   );
 }

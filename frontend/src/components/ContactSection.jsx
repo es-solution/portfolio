@@ -105,7 +105,7 @@ const ContactSection = ({ onCursorChange }) => {
                     <Grid container spacing={6}>
                         <Grid item xs={12} md={6}>
                             <motion.div>
-                                <Paper elevation={theme.palette.mode === 'light' ? 1 : 4} sx={{ p: 4, borderRadius: 3 }}>
+                                <Paper elevation={1} sx={{ p: 4, borderRadius: 3 }}>
                                     <Typography variant="h4" gutterBottom sx={{ fontWeight: 600, mb: 3 }}>
                                         Send a Message
                                     </Typography>
@@ -138,7 +138,7 @@ const ContactSection = ({ onCursorChange }) => {
                         <Grid item xs={12} md={6}>
                             <motion.div variants={itemVariants}>
                                 <Paper
-                                    elevation={theme.palette.mode === 'light' ? 1 : 4}
+                                    elevation={1}
                                     sx={{
                                         p: 4,
                                         height: '100%',
