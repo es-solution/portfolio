@@ -1,16 +1,16 @@
 // File: src/components/Navbar.jsx
 import { useState, useEffect } from 'react';
-import { 
-  AppBar, 
-  Box, 
-  Toolbar, 
-  Typography, 
-  Button, 
-  IconButton, 
-  Drawer, 
-  List, 
-  ListItem, 
-  ListItemText, 
+import {
+  AppBar,
+  Box,
+  Toolbar,
+  Typography,
+  Button,
+  IconButton,
+  Drawer,
+  List,
+  ListItem,
+  ListItemText,
   ListItemButton,
   useMediaQuery,
   useTheme,
@@ -20,6 +20,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 const Navbar = ({ toggleTheme, themeMode, onCursorChange }) => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -29,11 +30,11 @@ const Navbar = ({ toggleTheme, themeMode, onCursorChange }) => {
 
   // Navigation links
   const navLinks = [
-    { name: 'Home', href: '#home' },
-    { name: 'Services', href: '#services' },
+    { name: 'Home', href: '/' },
+    { name: 'Services', href: '/services' },
     { name: 'Technologies', href: '#technologies' },
-    { name: 'Products', href: '#products' },
-    { name: 'Contact', href: '#contact' },
+    { name: 'Products', href: '/products' },
+    { name: 'Contact', href: '/contact' },
   ];
 
   // Check if user has scrolled
@@ -41,7 +42,7 @@ const Navbar = ({ toggleTheme, themeMode, onCursorChange }) => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
-    
+
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -53,13 +54,13 @@ const Navbar = ({ toggleTheme, themeMode, onCursorChange }) => {
 
   return (
     <>
-      <AppBar 
-        position="fixed" 
-        color="inherit" 
+      <AppBar
+        position="fixed"
+        color="inherit"
         elevation={isScrolled ? 4 : 0}
         sx={{
-          backgroundColor: isScrolled 
-            ? theme.palette.background.paper 
+          backgroundColor: isScrolled
+            ? theme.palette.background.paper
             : 'transparent',
           transition: 'all 0.3s ease',
           backdropFilter: isScrolled ? 'blur(10px)' : 'none',
@@ -75,24 +76,26 @@ const Navbar = ({ toggleTheme, themeMode, onCursorChange }) => {
               onMouseEnter={() => onCursorChange('logo')}
               onMouseLeave={() => onCursorChange('default')}
             >
-              <Box 
+              <Box
                 component="img"
-                src="eslogo.jpg" 
+                src="eslogo.jpg"
                 alt="ES Solutions Logo"
                 sx={{ height: 40, mr: 1 }}
               />
-              <Typography 
-                variant="h6" 
-                component="div" 
-                sx={{ 
-                  flexGrow: 1,
-                  fontWeight: 700, 
-                  color: theme.palette.text.primary,
-                  ml: 1
-                }}
-              >
-                ES SOLUTIONS
-              </Typography>
+              <Link to="/" style={{ textDecoration: 'none', color: theme.palette.text.primary }}>
+                <Typography
+                  variant="h6"
+                  component="div"
+                  sx={{
+                    flexGrow: 1,
+                    fontWeight: 700,
+                    color: theme.palette.text.primary,
+                    ml: 1
+                  }}
+                >
+                  ES SOLUTIONS
+                </Typography>
+              </Link>
             </motion.div>
 
             <Box sx={{ flexGrow: 1 }} />
@@ -109,7 +112,7 @@ const Navbar = ({ toggleTheme, themeMode, onCursorChange }) => {
                   >
                     <Button
                       href={link.href}
-                      sx={{ 
+                      sx={{
                         mx: 1,
                         color: theme.palette.text.primary,
                         '&:hover': {
@@ -127,8 +130,8 @@ const Navbar = ({ toggleTheme, themeMode, onCursorChange }) => {
                   onMouseEnter={() => onCursorChange('button')}
                   onMouseLeave={() => onCursorChange('default')}
                 >
-                  <IconButton 
-                    onClick={toggleTheme} 
+                  <IconButton
+                    onClick={toggleTheme}
                     color="primary"
                     sx={{ ml: 2 }}
                   >
@@ -147,8 +150,8 @@ const Navbar = ({ toggleTheme, themeMode, onCursorChange }) => {
                   onMouseEnter={() => onCursorChange('button')}
                   onMouseLeave={() => onCursorChange('default')}
                 >
-                  <IconButton 
-                    onClick={toggleTheme} 
+                  <IconButton
+                    onClick={toggleTheme}
                     color="primary"
                     sx={{ mr: 1 }}
                   >
@@ -177,7 +180,7 @@ const Navbar = ({ toggleTheme, themeMode, onCursorChange }) => {
         open={mobileOpen}
         onClose={handleDrawerToggle}
         sx={{
-          '& .MuiDrawer-paper': { 
+          '& .MuiDrawer-paper': {
             width: 240,
             backgroundColor: theme.palette.background.paper
           },
@@ -190,7 +193,7 @@ const Navbar = ({ toggleTheme, themeMode, onCursorChange }) => {
           <List>
             {navLinks.map((link) => (
               <ListItem key={link.name} disablePadding>
-                <ListItemButton 
+                <ListItemButton
                   href={link.href}
                   onClick={handleDrawerToggle}
                   sx={{ textAlign: 'center' }}
