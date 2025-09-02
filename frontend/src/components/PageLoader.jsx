@@ -30,7 +30,7 @@ const PageLoader = () => {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#fff',
+        backgroundColor: '#00000',
         zIndex: 9999,
       }}
     >
@@ -76,7 +76,7 @@ const PageLoader = () => {
       
       <Typography 
         variant="body2" 
-        color="textSecondary"
+        color="#bdbdbd"
         sx={{ fontWeight: 500 }}
       >
         {Math.round(progress)}% LOADING
