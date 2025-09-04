@@ -1,8 +1,9 @@
 import { useState, useEffect, Suspense, lazy } from 'react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { CircularProgress, Box } from '@mui/material';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // <-- Add this
+import { CircularProgress, Box, Modal, Button, Typography, IconButton } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'; // <-- Add this
 
 // Lazy load components for better performance
 const Navbar = lazy(() => import('./components/Navbar'));
@@ -18,12 +19,17 @@ const PageLoader = lazy(() => import('./components/PageLoader'));
 const ProjectsShowcase = lazy(() => import('./components/ProjectsShowcase')); // <-- Add this
 const ProductDetailPage = lazy(() => import('./components/ProductDetailPage')); // <-- Add this
 const VideoLink = lazy(() => import('./components/VideoLink')); // <-- Add this
+const ShowcaseLanding = lazy(() => import('./components/ShowcaseLanding')); // <-- Add this
+const ShowcaseCards = lazy(() => import('./components/ShowcaseCards')); // <-- Add this
+const NotNTAProject = lazy(() => import('./components/NotNTAProject')); // <-- Add this
+const ConvoVaultProject = lazy(() => import('./components/ConvoVaultProject')); // <-- Add this
 
 function App() {
   const [loading, setLoading] = useState(true);
   const [themeMode, setThemeMode] = useState('dark');
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
   const [cursorType, setCursorType] = useState('default');
+  const [modalOpen, setModalOpen] = useState(true); // <-- Add modal state
 
   // Create theme based on mode
   const theme = createTheme({
@@ -102,6 +108,68 @@ function App() {
     setCursorType(type);
   };
 
+  // Modal component
+  const TopModal = () => (
+    <Modal
+      open={modalOpen}
+      onClose={() => setModalOpen(false)}
+      sx={{ zIndex: 1300 }}
+      disableScrollLock
+    >
+      <Box
+        sx={{
+          position: 'absolute',
+          top: 80, // Just below the navbar
+          left: '50%',
+          transform: 'translateX(-50%)',
+          bgcolor: themeMode === 'dark' ? '#1e1e1e' : '#fff',
+          borderRadius: 3,
+          boxShadow: 24,
+          p: 3,
+          minWidth: 320,
+          maxWidth: 400,
+          border: '1px solid',
+          borderColor: themeMode === 'dark' ? 'primary.dark' : 'primary.light',
+        }}
+      >
+        <IconButton
+          onClick={() => setModalOpen(false)}
+          sx={{ position: 'absolute', right: 8, top: 8, color: 'text.secondary' }}
+        >
+          <CloseIcon />
+        </IconButton>
+        <Typography variant="h6" sx={{ fontWeight: 700, mb: 2, textAlign: 'center' }}>
+          Try ConvoVault & CompeteHub Now!
+        </Typography>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Button
+            variant="contained"
+            color="primary"
+            fullWidth
+            href="http://panel.mait.ac.in:3001"
+            target="_blank"
+            rel="noopener noreferrer"
+            sx={{ borderRadius: 2, py: 1.2 }}
+          >
+            Try CompeteHub
+          </Button>
+          <a href="/cvt/extension.zip">
+            <Button
+              variant="outlined"
+              color="primary"
+              fullWidth
+              sx={{ borderRadius: 2, py: 1.2 }}
+              component="a"
+              download
+            >
+              Download ConvoVault Extension
+            </Button>
+          </a>
+        </Box>
+      </Box>
+    </Modal>
+  );
+
   if (loading) {
     return <PageLoader />;
   }
@@ -113,6 +181,7 @@ function App() {
       <Suspense fallback={<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}><CircularProgress /></Box>}>
         <Router>
           <Navbar toggleTheme={toggleTheme} themeMode={themeMode} onCursorChange={handleCursorChange} />
+          <TopModal /> {/* <-- Add modal here */}
           <Routes>
             {/* Homepage */}
             <Route
@@ -165,6 +234,12 @@ function App() {
                 </>
               }
             />
+            {/* <Route
+              path="/cvt/download"
+              element={
+                <Navigate to="/cvt/extension.zip" replace />
+              }
+            /> */}
             <Route
               path="/contact"
               element={
@@ -183,7 +258,36 @@ function App() {
                 </>
               }
             />
-            
+            {/* Showcase Landing Page */}
+            <Route
+              path="/showcase"
+              element={
+                <>
+                  <ShowcaseCards themeMode={themeMode} onCursorChange={handleCursorChange} />
+                  <Footer onCursorChange={handleCursorChange} />
+                </>
+              }
+            />
+            {/* Individual Showcase Pages */}
+            <Route
+              path="/showcase/notnta"
+              element={
+                <>
+                  <NotNTAProject themeMode={themeMode} onCursorChange={handleCursorChange} />
+                  <Footer onCursorChange={handleCursorChange} />
+                </>
+              }
+            />
+            <Route
+              path="/showcase/convovault"
+              element={
+                <>
+                  <ConvoVaultProject themeMode={themeMode} onCursorChange={handleCursorChange} />
+                  <Footer onCursorChange={handleCursorChange} />
+                </>
+              }
+            />
+
           </Routes>
         </Router>
       </Suspense>

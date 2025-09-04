@@ -32,8 +32,9 @@ const Navbar = ({ toggleTheme, themeMode, onCursorChange }) => {
   const navLinks = [
     { name: 'Home', href: '/' },
     { name: 'Services', href: '/services' },
-    { name: 'Technologies', href: '#technologies' },
+    // { name: 'Technologies', href: '#technologies' },
     { name: 'Products', href: '/products' },
+    { name: 'Showcase', href: '/showcase' },
     { name: 'Contact', href: '/contact' },
   ];
 
@@ -110,18 +111,35 @@ const Navbar = ({ toggleTheme, themeMode, onCursorChange }) => {
                     onMouseEnter={() => onCursorChange('link')}
                     onMouseLeave={() => onCursorChange('default')}
                   >
-                    <Button
-                      href={link.href}
-                      sx={{
-                        mx: 1,
-                        color: theme.palette.text.primary,
-                        '&:hover': {
-                          color: theme.palette.primary.main,
-                        }
-                      }}
-                    >
-                      {link.name}
-                    </Button>
+                    {link.href.startsWith('#') ? (
+                      <Button
+                        href={link.href}
+                        sx={{
+                          mx: 1,
+                          color: theme.palette.text.primary,
+                          '&:hover': {
+                            color: theme.palette.primary.main,
+                          }
+                        }}
+                      >
+                        {link.name}
+                      </Button>
+                    ) : (
+                      <Button
+                        component={Link}
+                        to={link.href}
+                        sx={{
+                          mx: 1,
+                          color: theme.palette.text.primary,
+                          textDecoration: 'none',
+                          '&:hover': {
+                            color: theme.palette.primary.main,
+                          }
+                        }}
+                      >
+                        {link.name}
+                      </Button>
+                    )}
                   </motion.div>
                 ))}
                 <motion.div
@@ -193,13 +211,24 @@ const Navbar = ({ toggleTheme, themeMode, onCursorChange }) => {
           <List>
             {navLinks.map((link) => (
               <ListItem key={link.name} disablePadding>
-                <ListItemButton
-                  href={link.href}
-                  onClick={handleDrawerToggle}
-                  sx={{ textAlign: 'center' }}
-                >
-                  <ListItemText primary={link.name} />
-                </ListItemButton>
+                {link.href.startsWith('#') ? (
+                  <ListItemButton
+                    href={link.href}
+                    onClick={handleDrawerToggle}
+                    sx={{ textAlign: 'center' }}
+                  >
+                    <ListItemText primary={link.name} />
+                  </ListItemButton>
+                ) : (
+                  <ListItemButton
+                    component={Link}
+                    to={link.href}
+                    onClick={handleDrawerToggle}
+                    sx={{ textAlign: 'center' }}
+                  >
+                    <ListItemText primary={link.name} />
+                  </ListItemButton>
+                )}
               </ListItem>
             ))}
           </List>
