@@ -146,7 +146,7 @@ function App() {
             variant="contained"
             color="primary"
             fullWidth
-            href="http://panel.mait.ac.in:3001"
+            href="https://competehub.essolutions.dev"
             target="_blank"
             rel="noopener noreferrer"
             sx={{ borderRadius: 2, py: 1.2 }}

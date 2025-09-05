@@ -443,7 +443,7 @@ const ShowcaseLanding = ({ themeMode, onCursorChange }) => {
                                 <Button
                                     variant="contained"
                                     size="large"
-                                    href="https://panel.mait.ac.in:3001"
+                                    href="https://competehub.essolutions.dev"
                                     target="_blank"
                                     startIcon={<PlayIcon />}
                                     sx={{
