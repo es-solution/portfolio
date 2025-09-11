@@ -3,9 +3,9 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { CircularProgress, Box, Modal, Button, Typography, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'; // <-- Add this
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-// Lazy load components for better performance
+// Lazy load components for performance
 const Navbar = lazy(() => import('./components/Navbar'));
 const HeroSection = lazy(() => import('./components/HeroSection'));
 const MarqueeSection = lazy(() => import('./components/Marquee'));
@@ -16,31 +16,28 @@ const Footer = lazy(() => import('./components/Footer'));
 const CustomCursor = lazy(() => import('./components/CustomCursor'));
 const InteractivePlayground = lazy(() => import('./components/InteractivePlayground'));
 const PageLoader = lazy(() => import('./components/PageLoader'));
-const ProjectsShowcase = lazy(() => import('./components/ProjectsShowcase')); // <-- Add this
-const ProductDetailPage = lazy(() => import('./components/ProductDetailPage')); // <-- Add this
-const VideoLink = lazy(() => import('./components/VideoLink')); // <-- Add this
-const ShowcaseLanding = lazy(() => import('./components/ShowcaseLanding')); // <-- Add this
-const ShowcaseCards = lazy(() => import('./components/ShowcaseCards')); // <-- Add this
-const NotNTAProject = lazy(() => import('./components/NotNTAProject')); // <-- Add this
-const ConvoVaultProject = lazy(() => import('./components/ConvoVaultProject')); // <-- Add this
+const ProjectsShowcase = lazy(() => import('./components/ProjectsShowcase'));
+const ProductDetailPage = lazy(() => import('./components/ProductDetailPage'));
+const VideoLink = lazy(() => import('./components/VideoLink'));
+const ShowcaseCards = lazy(() => import('./components/ShowcaseCards'));
+const NotNTAProject = lazy(() => import('./components/NotNTAProject'));
+const ConvoVaultProject = lazy(() => import('./components/ConvoVaultProject'));
+const Blog = lazy(() => import('./pages/Blog'));
+
 
 function App() {
   const [loading, setLoading] = useState(true);
   const [themeMode, setThemeMode] = useState('dark');
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
   const [cursorType, setCursorType] = useState('default');
-  const [modalOpen, setModalOpen] = useState(true); // <-- Add modal state
+  const [modalOpen, setModalOpen] = useState(true);
 
-  // Create theme based on mode
+  // Create theme
   const theme = createTheme({
     palette: {
       mode: themeMode,
-      primary: {
-        main: '#4299e1', // Blue from the logo
-      },
-      secondary: {
-        main: '#1a365d', // Navy from the logo background
-      },
+      primary: { main: '#4299e1' },
+      secondary: { main: '#1a365d' },
       background: {
         default: themeMode === 'light' ? '#ffffff' : '#121212',
         paper: themeMode === 'light' ? '#f7fafc' : '#1e1e1e',
@@ -52,18 +49,9 @@ function App() {
     },
     typography: {
       fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-      h1: {
-        fontWeight: 700,
-        fontSize: '3.5rem',
-      },
-      h2: {
-        fontWeight: 600,
-        fontSize: '2.75rem',
-      },
-      h3: {
-        fontWeight: 600,
-        fontSize: '2.25rem',
-      },
+      h1: { fontWeight: 700, fontSize: '3.5rem' },
+      h2: { fontWeight: 600, fontSize: '2.75rem' },
+      h3: { fontWeight: 600, fontSize: '2.25rem' },
     },
     components: {
       MuiButton: {
@@ -78,37 +66,23 @@ function App() {
     },
   });
 
-  // Handle cursor movement
+  // Cursor movement
   useEffect(() => {
-    const handleMouseMove = (e) => {
-      setCursorPosition({ x: e.clientX, y: e.clientY });
-    };
-
+    const handleMouseMove = (e) => setCursorPosition({ x: e.clientX, y: e.clientY });
     window.addEventListener('mousemove', handleMouseMove);
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-    };
+    return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
-  // Simulate page loading
+  // Simulate loading
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 2000);
+    const timer = setTimeout(() => setLoading(false), 2000);
     return () => clearTimeout(timer);
   }, []);
 
-  // Toggle theme mode
-  const toggleTheme = () => {
-    setThemeMode(prevMode => prevMode === 'light' ? 'dark' : 'light');
-  };
+  const toggleTheme = () => setThemeMode(prev => prev === 'light' ? 'dark' : 'light');
+  const handleCursorChange = (type) => setCursorType(type);
 
-  // Handle cursor type change based on elements hovered
-  const handleCursorChange = (type) => {
-    setCursorType(type);
-  };
-
-  // Modal component
+  // Top Modal (CompeteHub + ConvoVault promo)
   const TopModal = () => (
     <Modal
       open={modalOpen}
@@ -119,7 +93,7 @@ function App() {
       <Box
         sx={{
           position: 'absolute',
-          top: 80, // Just below the navbar
+          top: 80,
           left: '50%',
           transform: 'translateX(-50%)',
           bgcolor: themeMode === 'dark' ? '#1e1e1e' : '#fff',
@@ -170,124 +144,97 @@ function App() {
     </Modal>
   );
 
-  if (loading) {
-    return <PageLoader />;
-  }
+  if (loading) return <PageLoader />;
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       {/* <CustomCursor position={cursorPosition} type={cursorType} /> */}
-      <Suspense fallback={<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}><CircularProgress /></Box>}>
+      <Suspense fallback={
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+          <CircularProgress />
+        </Box>
+      }>
         <Router>
           <Navbar toggleTheme={toggleTheme} themeMode={themeMode} onCursorChange={handleCursorChange} />
-          <TopModal /> {/* <-- Add modal here */}
+          <TopModal />
           <Routes>
-            {/* Homepage */}
-            <Route
-              path="/"
-              element={
-                <>
-                  <HeroSection themeMode={themeMode} onCursorChange={handleCursorChange} />
-                  <MarqueeSection onCursorChange={handleCursorChange} />
-                  <ServicesSection onCursorChange={handleCursorChange} />
-                  <InteractivePlayground onCursorChange={handleCursorChange} />
-                  {/* Show limited projects on homepage */}
-                  <ProjectsShowcase
-                    themeMode={themeMode}
-                    onCursorChange={handleCursorChange}
-                    limit={3}
-                    showHeader={true}
-                  />
-                  {/* Standalone video component example */}
-                  {/* <VideoLink
-                    videoUrl="https://youtube.com/watch?v=..."
-                    title="Project Demo"
-                    variant="button"
-                    themeMode={themeMode}
-                  /> */}
-                  <ContactSection onCursorChange={handleCursorChange} />
-                  <Footer onCursorChange={handleCursorChange} />
-                </>
-              }
-            />
-            {/* Products page - show all projects */}
-            <Route
-              path="/products"
-              element={
-                <>
-                  <ProjectsShowcase
-                    themeMode={themeMode}
-                    onCursorChange={handleCursorChange}
-                  />
-                  <Footer onCursorChange={handleCursorChange} />
-                </>
-              }
-            />
-            {/* Product detail page */}
-            <Route
-              path="/products/:productname"
-              element={
-                <>
-                  <ProductDetailPage themeMode={themeMode} />
-                  <Footer onCursorChange={handleCursorChange} />
-                </>
-              }
-            />
-            {/* <Route
-              path="/cvt/download"
-              element={
-                <Navigate to="/cvt/extension.zip" replace />
-              }
-            /> */}
-            <Route
-              path="/contact"
-              element={
-                <>
-                  <ContactSection themeMode={themeMode} />
-                  <Footer onCursorChange={handleCursorChange} />
-                </>
-              }
-            />
-            <Route
-              path="/services"
-              element={
-                <>
-                  <ServicesSection themeMode={themeMode} />
-                  <Footer onCursorChange={handleCursorChange} />
-                </>
-              }
-            />
-            {/* Showcase Landing Page */}
-            <Route
-              path="/showcase"
-              element={
-                <>
-                  <ShowcaseCards themeMode={themeMode} onCursorChange={handleCursorChange} />
-                  <Footer onCursorChange={handleCursorChange} />
-                </>
-              }
-            />
-            {/* Individual Showcase Pages */}
-            <Route
-              path="/showcase/notnta"
-              element={
-                <>
-                  <NotNTAProject themeMode={themeMode} onCursorChange={handleCursorChange} />
-                  <Footer onCursorChange={handleCursorChange} />
-                </>
-              }
-            />
-            <Route
-              path="/showcase/convovault"
-              element={
-                <>
-                  <ConvoVaultProject themeMode={themeMode} onCursorChange={handleCursorChange} />
-                  <Footer onCursorChange={handleCursorChange} />
-                </>
-              }
-            />
+            {/* Home */}
+            <Route path="/" element={
+              <>
+                <HeroSection themeMode={themeMode} onCursorChange={handleCursorChange} />
+                <MarqueeSection onCursorChange={handleCursorChange} />
+                <ServicesSection onCursorChange={handleCursorChange} />
+                <InteractivePlayground onCursorChange={handleCursorChange} />
+                <ProjectsShowcase themeMode={themeMode} onCursorChange={handleCursorChange} limit={3} showHeader />
+                <ContactSection onCursorChange={handleCursorChange} />
+                <Footer onCursorChange={handleCursorChange} />
+              </>
+            } />
 
+            {/* Products */}
+            <Route path="/products" element={
+              <>
+                <ProjectsShowcase themeMode={themeMode} onCursorChange={handleCursorChange} />
+                <Footer onCursorChange={handleCursorChange} />
+              </>
+            } />
+
+            {/* Product Detail */}
+            <Route path="/products/:productname" element={
+              <>
+                <ProductDetailPage themeMode={themeMode} />
+                <Footer onCursorChange={handleCursorChange} />
+              </>
+            } />
+
+            {/* Contact */}
+            <Route path="/contact" element={
+              <>
+                <ContactSection themeMode={themeMode} />
+                <Footer onCursorChange={handleCursorChange} />
+              </>
+            } />
+
+            {/* Services */}
+            <Route path="/services" element={
+              <>
+                <ServicesSection themeMode={themeMode} />
+                <Footer onCursorChange={handleCursorChange} />
+              </>
+            } />
+
+            {/* Showcase */}
+            <Route path="/showcase" element={
+              <>
+                <ShowcaseCards themeMode={themeMode} onCursorChange={handleCursorChange} />
+                <Footer onCursorChange={handleCursorChange} />
+              </>
+            } />
+
+            {/* Showcase: NotNTA */}
+            <Route path="/showcase/notnta" element={
+              <>
+                <NotNTAProject themeMode={themeMode} onCursorChange={handleCursorChange} />
+                <Footer onCursorChange={handleCursorChange} />
+              </>
+            } />
+
+            {/* Showcase: ConvoVault */}
+            <Route path="/showcase/convovault" element={
+              <>
+                <ConvoVaultProject themeMode={themeMode} onCursorChange={handleCursorChange} />
+                <Footer onCursorChange={handleCursorChange} />
+              </>
+            } />
+
+            {/* ✅ Blog Page */}
+            <Route path="/blog" element={
+              <>
+                <Blog themeMode={themeMode} onCursorChange={handleCursorChange} />
+                <Footer onCursorChange={handleCursorChange} />
+              </>
+            } />
           </Routes>
         </Router>
       </Suspense>

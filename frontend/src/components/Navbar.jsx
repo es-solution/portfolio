@@ -28,27 +28,24 @@ const Navbar = ({ toggleTheme, themeMode, onCursorChange }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-  // Navigation links
+  // ✅ Navigation links including Blog
   const navLinks = [
     { name: 'Home', href: '/' },
     { name: 'Services', href: '/services' },
-    // { name: 'Technologies', href: '#technologies' },
     { name: 'Products', href: '/products' },
     { name: 'Showcase', href: '/showcase' },
+    { name: 'Blogs', href: '/blog' },   // <-- Added Blog here
     { name: 'Contact', href: '/contact' },
   ];
 
-  // Check if user has scrolled
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
-
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Handle drawer toggle
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
@@ -101,7 +98,7 @@ const Navbar = ({ toggleTheme, themeMode, onCursorChange }) => {
 
             <Box sx={{ flexGrow: 1 }} />
 
-            {/* Desktop Navigation */}
+            {/* ✅ Desktop Navigation */}
             {!isMobile && (
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 {navLinks.map((link) => (
@@ -111,35 +108,20 @@ const Navbar = ({ toggleTheme, themeMode, onCursorChange }) => {
                     onMouseEnter={() => onCursorChange('link')}
                     onMouseLeave={() => onCursorChange('default')}
                   >
-                    {link.href.startsWith('#') ? (
-                      <Button
-                        href={link.href}
-                        sx={{
-                          mx: 1,
-                          color: theme.palette.text.primary,
-                          '&:hover': {
-                            color: theme.palette.primary.main,
-                          }
-                        }}
-                      >
-                        {link.name}
-                      </Button>
-                    ) : (
-                      <Button
-                        component={Link}
-                        to={link.href}
-                        sx={{
-                          mx: 1,
-                          color: theme.palette.text.primary,
-                          textDecoration: 'none',
-                          '&:hover': {
-                            color: theme.palette.primary.main,
-                          }
-                        }}
-                      >
-                        {link.name}
-                      </Button>
-                    )}
+                    <Button
+                      component={Link}
+                      to={link.href}
+                      sx={{
+                        mx: 1,
+                        color: theme.palette.text.primary,
+                        textDecoration: 'none',
+                        '&:hover': {
+                          color: theme.palette.primary.main,
+                        }
+                      }}
+                    >
+                      {link.name}
+                    </Button>
                   </motion.div>
                 ))}
                 <motion.div
@@ -159,7 +141,7 @@ const Navbar = ({ toggleTheme, themeMode, onCursorChange }) => {
               </Box>
             )}
 
-            {/* Mobile Navigation Button */}
+            {/* ✅ Mobile Navigation Button */}
             {isMobile && (
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <motion.div
@@ -192,7 +174,7 @@ const Navbar = ({ toggleTheme, themeMode, onCursorChange }) => {
         </Container>
       </AppBar>
 
-      {/* Mobile Navigation Drawer */}
+      {/* ✅ Mobile Navigation Drawer */}
       <Drawer
         anchor="right"
         open={mobileOpen}
@@ -211,31 +193,21 @@ const Navbar = ({ toggleTheme, themeMode, onCursorChange }) => {
           <List>
             {navLinks.map((link) => (
               <ListItem key={link.name} disablePadding>
-                {link.href.startsWith('#') ? (
-                  <ListItemButton
-                    href={link.href}
-                    onClick={handleDrawerToggle}
-                    sx={{ textAlign: 'center' }}
-                  >
-                    <ListItemText primary={link.name} />
-                  </ListItemButton>
-                ) : (
-                  <ListItemButton
-                    component={Link}
-                    to={link.href}
-                    onClick={handleDrawerToggle}
-                    sx={{ textAlign: 'center' }}
-                  >
-                    <ListItemText primary={link.name} />
-                  </ListItemButton>
-                )}
+                <ListItemButton
+                  component={Link}
+                  to={link.href}
+                  onClick={handleDrawerToggle}
+                  sx={{ textAlign: 'center' }}
+                >
+                  <ListItemText primary={link.name} />
+                </ListItemButton>
               </ListItem>
             ))}
           </List>
         </Box>
       </Drawer>
 
-      {/* Toolbar offset for fixed position */}
+      {/* Toolbar offset for fixed navbar */}
       <Toolbar />
     </>
   );
