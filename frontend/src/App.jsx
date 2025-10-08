@@ -82,67 +82,112 @@ function App() {
   const toggleTheme = () => setThemeMode(prev => prev === 'light' ? 'dark' : 'light');
   const handleCursorChange = (type) => setCursorType(type);
 
-  // Top Modal (CompeteHub + ConvoVault promo)
-  const TopModal = () => (
-    <Modal
-      open={modalOpen}
-      onClose={() => setModalOpen(false)}
-      sx={{ zIndex: 1300 }}
-      disableScrollLock
-    >
+  // Top Modal (CompeteHub + ConvoVault promo) - Simple implementation to prevent flickering
+  const TopModal = () => {
+    if (!modalOpen) return null;
+    
+    return (
       <Box
         sx={{
-          position: 'absolute',
-          top: 80,
-          left: '50%',
-          transform: 'translateX(-50%)',
-          bgcolor: themeMode === 'dark' ? '#1e1e1e' : '#fff',
-          borderRadius: 3,
-          boxShadow: 24,
-          p: 3,
-          minWidth: 320,
-          maxWidth: 400,
-          border: '1px solid',
-          borderColor: themeMode === 'dark' ? 'primary.dark' : 'primary.light',
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          zIndex: 1300,
+          display: 'flex',
+          alignItems: 'flex-start',
+          justifyContent: 'center',
+          paddingTop: '80px',
         }}
+        onClick={() => setModalOpen(false)}
       >
-        <IconButton
-          onClick={() => setModalOpen(false)}
-          sx={{ position: 'absolute', right: 8, top: 8, color: 'text.secondary' }}
+        <Box
+          sx={{
+            backgroundColor: themeMode === 'dark' ? '#1e1e1e' : '#ffffff',
+            borderRadius: 3,
+            padding: 3,
+            minWidth: 320,
+            maxWidth: 400,
+            border: `1px solid ${themeMode === 'dark' ? '#4299e1' : '#e2e8f0'}`,
+            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+            position: 'relative',
+          }}
+          onClick={(e) => e.stopPropagation()}
         >
-          <CloseIcon />
-        </IconButton>
-        <Typography variant="h6" sx={{ fontWeight: 700, mb: 2, textAlign: 'center' }}>
-          Try ConvoVault & CompeteHub Now!
-        </Typography>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <Button
-            variant="contained"
-            color="primary"
-            fullWidth
-            href="https://competehub.essolutions.dev"
-            target="_blank"
-            rel="noopener noreferrer"
-            sx={{ borderRadius: 2, py: 1.2 }}
+          <IconButton
+            onClick={() => setModalOpen(false)}
+            sx={{ 
+              position: 'absolute', 
+              right: 8, 
+              top: 8, 
+              color: 'text.secondary',
+              '&:hover': {
+                backgroundColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.04)'
+              }
+            }}
           >
-            Try CompeteHub
-          </Button>
-          <a href="/cvt/extension.zip">
+            <CloseIcon />
+          </IconButton>
+          
+          <Typography 
+            variant="h6" 
+            sx={{ 
+              fontWeight: 700, 
+              mb: 2, 
+              textAlign: 'center',
+              color: 'text.primary'
+            }}
+          >
+            Try ConvoVault & CompeteHub Now!
+          </Typography>
+          
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              href="https://competehub.essolutions.dev"
+              target="_blank"
+              rel="noopener noreferrer"
+              sx={{ 
+                borderRadius: 2, 
+                py: 1.2,
+                textDecoration: 'none',
+                '&:hover': {
+                  transform: 'translateY(-1px)',
+                  transition: 'transform 0.2s ease'
+                }
+              }}
+            >
+              Try CompeteHub
+            </Button>
+            
             <Button
               variant="outlined"
               color="primary"
               fullWidth
-              sx={{ borderRadius: 2, py: 1.2 }}
               component="a"
-              download
+              href="/cvt/extension.zip"
+              download="convovault-extension.zip"
+              sx={{ 
+                borderRadius: 2, 
+                py: 1.2,
+                textDecoration: 'none',
+                '&:hover': {
+                  transform: 'translateY(-1px)',
+                  transition: 'transform 0.2s ease'
+                }
+              }}
             >
               Download ConvoVault Extension
             </Button>
-          </a>
+          </Box>
         </Box>
       </Box>
-    </Modal>
-  );
+    );
+  };
 
   if (loading) return <PageLoader />;
 
