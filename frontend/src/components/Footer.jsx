@@ -48,9 +48,9 @@ const Footer = ({ onCursorChange }) => {
   const socialLinks = [
     // { icon: <FacebookIcon />, href: 'https://facebook.com', label: 'Facebook' },
     // { icon: <TwitterIcon />, href: 'https://twitter.com', label: 'Twitter' },
-    { icon: <InstagramIcon />, href: 'https://www.instagram.com/es_webdev_', label: 'Instagram' },
+    { icon: <InstagramIcon />, href: 'https://www.instagram.com/es_tech_solutions', label: 'Instagram' },
     { icon: <GitHubIcon />, href: 'https://github.com/es-solution', label: 'GitHub' },
-    { icon: <LinkedInIcon />, href: 'https://linkedin.com', label: 'LinkedIn' },
+    { icon: <LinkedInIcon />, href: 'https://www.linkedin.com/company/es-solutionss', label: 'LinkedIn' },
   ];
 
   return (
