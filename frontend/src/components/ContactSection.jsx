@@ -97,23 +97,64 @@ const ContactSection = ({ onCursorChange }) => {
     };
 
     return (
-        <Box id="contact" sx={{ py: 10 }} ref={ref}>
+        <Box id="contact" sx={{ py: 6 }} ref={ref}>
             <Container maxWidth="lg">
-                {/* ... Title and Subtitle remain unchanged */}
-
                 <motion.div variants={{ visible: { opacity: 1 } }} initial="hidden" animate={controls}>
-                    <Grid container spacing={6}>
-                        <Grid item xs={12} md={6}>
-                            <motion.div>
-                                <Paper elevation={theme.palette.mode === 'light' ? 1 : 4} sx={{ p: 4, borderRadius: 3 }}>
-                                    <Typography variant="h4" gutterBottom sx={{ fontWeight: 600, mb: 3 }}>
+                    <Grid 
+                        container 
+                        spacing={3}
+                        sx={{ 
+                            display: 'flex', 
+                            width: '100%',
+                            justifyContent: 'center',
+                            alignItems: 'center'
+                        }}
+                    >
+                        {/* Message Form */}
+                        <Grid item xs={12} md={6} sx={{ display: 'flex', flex: { md: 1 } }}>
+                            <motion.div style={{ width: '100%', display: 'flex' }}>
+                                <Paper 
+                                    elevation={theme.palette.mode === 'light' ? 1 : 4} 
+                                    sx={{ 
+                                        p: { xs: 3, md: 4 }, 
+                                        borderRadius: 3,
+                                        height: '100%',
+                                        width: '100%',
+                                        display: 'flex',
+                                        flexDirection: 'column'
+                                    }}
+                                >
+                                    <Typography variant="h4" gutterBottom sx={{ 
+                                        fontWeight: 600, 
+                                        mb: 3,
+                                        fontSize: { xs: '1.75rem', md: '2rem' }
+                                    }}>
                                         Send a Message
                                     </Typography>
 
-                                    <Box component="form" noValidate sx={{ mt: 1 }} ref={formRef} onSubmit={handleSubmit}>
+                                    <Box 
+                                        component="form" 
+                                        noValidate 
+                                        sx={{ 
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            flexGrow: 1
+                                        }} 
+                                        ref={formRef} 
+                                        onSubmit={handleSubmit}
+                                    >
                                         <TextField required fullWidth label="Your Name" name="from_name" variant="outlined" sx={{ mb: 2 }} />
                                         <TextField required fullWidth label="Your Email" name="reply_to" type="email" variant="outlined" sx={{ mb: 2 }} />
-                                        <TextField required fullWidth multiline rows={4} label="Your Message" name="message" variant="outlined" sx={{ mb: 3 }} />
+                                        <TextField 
+                                            required 
+                                            fullWidth 
+                                            multiline 
+                                            rows={3} 
+                                            label="Your Message" 
+                                            name="message" 
+                                            variant="outlined" 
+                                            sx={{ mb: 3, flexGrow: 1 }} 
+                                        />
 
                                         <Button
                                             type="submit"
@@ -122,85 +163,103 @@ const ContactSection = ({ onCursorChange }) => {
                                             color="primary"
                                             size="large"
                                             endIcon={<SendIcon />}
-                                            sx={{ py: 1.5, textTransform: 'none', fontWeight: 600, fontSize: '1rem' }}
+                                            sx={{ 
+                                                py: 1.5, 
+                                                textTransform: 'none', 
+                                                fontWeight: 600, 
+                                                fontSize: '1rem',
+                                                mt: 'auto' 
+                                            }}
                                         >
                                             Send Message
                                         </Button>
-                                    </Box>
 
-                                    {status === 'success' && <Alert severity="success" sx={{ mt: 3 }}>Message sent successfully!</Alert>}
-                                    {status === 'error' && <Alert severity="error" sx={{ mt: 3 }}>Oops! Something went wrong.</Alert>}
+                                        {status && (
+                                            <Alert severity={status} sx={{ mt: 2 }}>
+                                                {status === 'success' ? 'Message sent successfully!' : 'Oops! Something went wrong.'}
+                                            </Alert>
+                                        )}
+                                    </Box>
                                 </Paper>
                             </motion.div>
                         </Grid>
 
-                        {/* Right side (Contact info) remains unchanged */}
-                        <Grid item xs={12} md={6}>
-                            <motion.div variants={itemVariants}>
+                        {/* Contact Info */}
+                        <Grid item xs={12} md={6} sx={{ display: 'flex', flex: { md: 1 } }}>
+                            <motion.div style={{ width: '100%', display: 'flex' }}>
                                 <Paper
                                     elevation={theme.palette.mode === 'light' ? 1 : 4}
                                     sx={{
-                                        p: 4,
+                                        p: { xs: 3, md: 4 },
                                         height: '100%',
+                                        width: '100%',
                                         borderRadius: 3,
                                         display: 'flex',
-                                        flexDirection: 'column',
+                                        flexDirection: 'column'
                                     }}
-                                    onMouseEnter={() => onCursorChange('interactive')}
-                                    onMouseLeave={() => onCursorChange('default')}
                                 >
-                                    <Typography variant="h4" gutterBottom sx={{ fontWeight: 600, mb: 4 }}>
+                                    <Typography variant="h4" gutterBottom sx={{ 
+                                        fontWeight: 600, 
+                                        mb: 4,
+                                        fontSize: { xs: '1.75rem', md: '2rem' }
+                                    }}>
                                         Contact Information
                                     </Typography>
 
-                                    <Box sx={{ mb: 4 }}>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                                            <LocationOnIcon color="primary" sx={{ fontSize: 28, mr: 2 }} />
-                                            <Typography variant="h6">
-                                                Our Location
-                                            </Typography>
-                                        </Box>
-                                        <Typography variant="body1" color="textSecondary" sx={{ ml: 6 }}>
-                                            {/* 123 Tech Park, Innovation Street
+                                    <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                                        <Box>
+                                            {/* Location Info */}
+                                            <Box sx={{ mb: 4 }}>
+                                                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5 }}>
+                                                    <LocationOnIcon color="primary" sx={{ fontSize: 28, mr: 2 }} />
+                                                    <Typography variant="h6">
+                                                        Our Location
+                                                    </Typography>
+                                                </Box>
+                                                <Typography variant="body1" color="textSecondary" sx={{ ml: 6 }}>
+                                                    {/* 123 Tech Park, Innovation Street
                       <br /> */}
-                                            Delhi India
-                                        </Typography>
-                                    </Box>
+                                                    Delhi India
+                                                </Typography>
+                                            </Box>
 
-                                    <Box sx={{ mb: 4 }}>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                                            <EmailIcon color="primary" sx={{ fontSize: 28, mr: 2 }} />
-                                            <Typography variant="h6">
-                                                Email Us
+                                            {/* Email Info */}
+                                            <Box sx={{ mb: 3.5 }}>
+                                                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5 }}>
+                                                    <EmailIcon color="primary" sx={{ fontSize: 28, mr: 2 }} />
+                                                    <Typography variant="h6">
+                                                        Email Us
+                                                    </Typography>
+                                                </Box>
+                                                <Typography variant="body1" color="textSecondary" sx={{ ml: 6 }}>
+                                                    contact.essolutions@gmail.com
+                                                    <br />
+                                                    {/* support@essolutions.com */}
+                                                </Typography>
+                                            </Box>
+
+                                            {/* Phone Info */}
+                                            <Box sx={{ mb: 3.5 }}>
+                                                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5 }}>
+                                                    <PhoneIcon color="primary" sx={{ fontSize: 28, mr: 2 }} />
+                                                    <Typography variant="h6">
+                                                        WhatsApp Us
+                                                    </Typography>
+                                                </Box>
+                                                <Typography variant="body1" color="textSecondary" sx={{ ml: 6 }}>
+                                                    +91 92113 12466
+                                                    <br />
+                                                    {/* +91 12345 67890 */}
+                                                </Typography>
+                                            </Box>
+                                        </Box>
+
+                                        <Box sx={{ mt: 'auto' }}>
+                                            <Typography variant="body2" color="textSecondary">
+                                                We're available 24/7 message us on whatsapp.
                                             </Typography>
                                         </Box>
-                                        <Typography variant="body1" color="textSecondary" sx={{ ml: 6 }}>
-                                            contact.essolutions@gmail.com
-                                            <br />
-                                            {/* support@essolutions.com */}
-                                        </Typography>
                                     </Box>
-
-                                    <Box sx={{ mb: 4 }}>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                                            <PhoneIcon color="primary" sx={{ fontSize: 28, mr: 2 }} />
-                                            <Typography variant="h6">
-                                                WhatsApp Us
-                                            </Typography>
-                                        </Box>
-                                        <Typography variant="body1" color="textSecondary" sx={{ ml: 6 }}>
-                                            +91 92113 12466
-                                            <br />
-                                            {/* +91 12345 67890 */}
-                                        </Typography>
-                                    </Box>
-
-                                    <Box sx={{ mt: 'auto' }}>
-                                        <Typography variant="body2" color="textSecondary">
-                                            We're available 24/7 message us on whatsapp.
-                                        </Typography>
-                                    </Box>
-
                                 </Paper>
                             </motion.div>
                         </Grid>

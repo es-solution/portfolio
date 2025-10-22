@@ -7,10 +7,12 @@
   background-color: var(--background-color, #ffffff);
   box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.05);
   overflow: hidden;
+  padding: 60px 0;
 }
 
 .tech-marquee-section {
-  padding: 40px 0;
+  margin: 20px 0;
+  padding: 20px 0;
 }
 
 .marquee-heading {
@@ -26,9 +28,10 @@
 
 .marquee-content {
   display: flex;
-  width: fit-content;
-  animation: marquee 50s linear infinite;
-  animation-play-state: running;
+  animation: marquee 30s linear infinite;
+  white-space: nowrap;
+  will-change: transform;
+  padding: 20px 0;  /* Added vertical padding */
 }
 
 .marquee-content:hover {
@@ -36,7 +39,6 @@
 }
 
 .marquee-reverse {
-  animation-name: marquee-reverse;
   animation-direction: reverse;
 }
 
@@ -45,34 +47,27 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 10px 25px;
-  min-width: 120px;
+  padding: 10px 40px;  /* Adjusted padding */
+  min-width: 180px;    /* Increased minimum width */
+  text-align: center;
   color: var(--text-color, #555555);
-  transition: transform 0.2s ease;
-}
-
-.tech-item:hover {
-  transform: scale(1.1);
-}
-
-.tech-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 50px;
-  height: 50px;
-  font-size: 28px;
-  font-weight: bold;
-  margin-bottom: 10px;
-  background-color: rgba(255, 255, 255, 0.9);
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .tech-item span {
-  font-size: 14px;
-  text-align: center;
-  white-space: nowrap;
+  margin-top: 12px;    /* Increased space between icon and text */
+  font-size: 0.9rem;
+  font-weight: 500;    /* Added slightly bolder font */
+}
+
+.tech-icon {
+  font-size: 2.5rem;   /* Slightly larger icons */
+  transition: transform 0.3s ease;
+  padding: 8px;        /* Added padding around icons */
+  border-radius: 8px;  /* Optional: adds subtle rounded corners */
+}
+
+.tech-item:hover .tech-icon {
+  transform: scale(1.1);
 }
 
 /* Fade edges */
@@ -123,18 +118,18 @@
   }
   
   .tech-item {
-    min-width: 100px;
-    padding: 8px 16px;
+    min-width: 140px;
+    padding: 8px 24px;
   }
   
   .tech-icon {
-    width: 40px;
-    height: 40px;
-    font-size: 22px;
+    font-size: 2rem;
+    padding: 6px;
   }
   
   .tech-item span {
-    font-size: 12px;
+    margin-top: 8px;
+    font-size: 0.8rem;
   }
 }
 

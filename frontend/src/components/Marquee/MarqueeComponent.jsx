@@ -1,5 +1,5 @@
 // File: src/components/Marquee/MarqueeComponent.jsx
-import { useEffect, useRef, memo } from 'react';
+import { useRef, memo } from 'react';
 import { Box, Typography, Container } from '@mui/material';
 import './marquee.css';
 
@@ -44,20 +44,6 @@ const MarqueeComponent = ({ onCursorChange }) => {
   const techMarqueeRef = useRef(null);
   const frameworkMarqueeRef = useRef(null);
 
-  // Initialize marquee effect after component mount
-  useEffect(() => {
-    const initMarquee = () => {
-      if (techMarqueeRef.current && frameworkMarqueeRef.current) {
-        // Automatically start animation using CSS animations
-        // No JavaScript animation required which improves performance
-      }
-    };
-
-    initMarquee();
-    
-    // Cleanup function not needed for CSS animations
-  }, []);
-
   return (
     <Box className="tech-marquee-container">
       {/* Languages Marquee */}
@@ -79,20 +65,14 @@ const MarqueeComponent = ({ onCursorChange }) => {
             onMouseEnter={() => onCursorChange('interactive')}
             onMouseLeave={() => onCursorChange('default')}
           >
-            {/* First set of items */}
-            {technologies.map((tech, index) => (
-              <div className="tech-item" key={`tech-${index}`}>
-                {getIconComponent(tech.icon, tech.color)}
-                <span>{tech.name}</span>
-              </div>
-            ))}
-            
-            {/* Duplicate for continuous loop */}
-            {technologies.map((tech, index) => (
-              <div className="tech-item" key={`tech-dup-${index}`}>
-                {getIconComponent(tech.icon, tech.color)}
-                <span>{tech.name}</span>
-              </div>
+            {/* Quadruple the items for smoother looping */}
+            {[...Array(4)].map((_, i) => (
+              technologies.map((tech, index) => (
+                <div className="tech-item" key={`tech-${i}-${index}`}>
+                  {getIconComponent(tech.icon, tech.color)}
+                  <span>{tech.name}</span>
+                </div>
+              ))
             ))}
           </div>
         </div>
@@ -117,20 +97,14 @@ const MarqueeComponent = ({ onCursorChange }) => {
             onMouseEnter={() => onCursorChange('interactive')}
             onMouseLeave={() => onCursorChange('default')}
           >
-            {/* First set of items */}
-            {frameworks.map((framework, index) => (
-              <div className="tech-item" key={`framework-${index}`}>
-                {getIconComponent(framework.icon, framework.color)}
-                <span>{framework.name}</span>
-              </div>
-            ))}
-            
-            {/* Duplicate for continuous loop */}
-            {frameworks.map((framework, index) => (
-              <div className="tech-item" key={`framework-dup-${index}`}>
-                {getIconComponent(framework.icon, framework.color)}
-                <span>{framework.name}</span>
-              </div>
+            {/* Quadruple the items for smoother looping */}
+            {[...Array(4)].map((_, i) => (
+              frameworks.map((framework, index) => (
+                <div className="tech-item" key={`framework-${i}-${index}`}>
+                  {getIconComponent(framework.icon, framework.color)}
+                  <span>{framework.name}</span>
+                </div>
+              ))
             ))}
           </div>
         </div>

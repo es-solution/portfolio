@@ -187,12 +187,12 @@ const ProjectsShowcase = ({ themeMode, onCursorChange, limit = null, showHeader 
   const displayProjects = limit ? projectsData.slice(0, limit) : projectsData;
   const featuredProjects = displayProjects.filter(project => project.featured);
 
-  // Auto-advance carousel for featured projects
+  // Auto-advance carousel for featured projects with smoother timing
   useEffect(() => {
     if (featuredProjects.length > 1) {
       const timer = setInterval(() => {
         setCurrentSlide((prev) => (prev + 1) % featuredProjects.length);
-      }, 5000);
+      }, 8000); // Increased from 5000 to 8000 for better viewing time
       return () => clearInterval(timer);
     }
   }, [featuredProjects.length]);
@@ -346,7 +346,7 @@ const ProjectsShowcase = ({ themeMode, onCursorChange, limit = null, showHeader 
                 <Box
                   sx={{
                     position: 'relative',
-                    borderRadius: 4,
+                    borderRadius: '24px',
                     overflow: 'hidden',
                     background: themeMode === 'dark'
                       ? 'linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%)'
@@ -357,131 +357,206 @@ const ProjectsShowcase = ({ themeMode, onCursorChange, limit = null, showHeader 
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={currentSlide}
-                      initial={{ opacity: 0, x: 300 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -300 }}
-                      transition={{ duration: 0.5, ease: "easeInOut" }}
+                      initial={{ opacity: 0, x: 100 }} // Reduced x distance
+                      animate={{ 
+                        opacity: 1, 
+                        x: 0,
+                        transition: {
+                          duration: 0.8,  // Increased duration
+                          ease: [0.4, 0, 0.2, 1], // Custom easing for smoother motion
+                        }
+                      }}
+                      exit={{ 
+                        opacity: 0, 
+                        x: -100,  // Reduced x distance
+                        transition: {
+                          duration: 0.6,  // Slightly faster exit
+                          ease: [0.4, 0, 0.2, 1],
+                        }
+                      }}
                     >
-                      <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' ,padding: '20px'}}>
-                        <Grid item xs={12} md={6}>
+                      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' } }}>
+                        {/* Image/Video Section */}
+                        <Box 
+                          sx={{ 
+                            flex: '0 0 60%',
+                            position: 'relative',
+                            height: { xs: '300px', md: '600px' },
+                          }}
+                        >
                           <Box
                             sx={{
-                              position: 'relative',
-                              height: { xs: 300, md: 500 },
+                              position: 'absolute',
+                              inset: 0,
                               background: `url(${featuredProjects[currentSlide]?.image})`,
                               backgroundSize: 'cover',
                               backgroundPosition: 'center',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                            }}
-                          >
-                            <Box
-                              sx={{
+                              '&::before': {
+                                content: '""',
                                 position: 'absolute',
                                 inset: 0,
-                                background: 'linear-gradient(45deg, rgba(0,0,0,0.6), rgba(0,0,0,0.2))',
-                              }}
-                            />
+                                background: 'linear-gradient(to right, rgba(0,0,0,0.7), rgba(0,0,0,0.3))',
+                                zIndex: 1
+                              }
+                            }}
+                          >
                             <IconButton
                               onClick={() => handleVideoPlay(featuredProjects[currentSlide]?.videoUrl, featuredProjects[currentSlide]?.liveUrl)}
                               onMouseEnter={() => onCursorChange?.('button')}
                               onMouseLeave={() => onCursorChange?.('default')}
                               sx={{
-                                position: 'relative',
+                                position: 'absolute',
+                                top: '50%',
+                                left: '50%',
+                                transform: 'translate(-50%, -50%)',
                                 zIndex: 2,
-                                width: 80,
-                                height: 80,
+                                width: { xs: 64, md: 80 },
+                                height: { xs: 64, md: 80 },
                                 background: alpha(theme.palette.primary.main, 0.9),
                                 color: 'white',
                                 '&:hover': {
                                   background: theme.palette.primary.main,
-                                  transform: 'scale(1.1)',
+                                  transform: 'translate(-50%, -50%) scale(1.1)',
                                 },
                                 transition: 'all 0.3s ease',
                               }}
                             >
-                              <PlayIcon sx={{ fontSize: 40 }} />
+                              <PlayIcon sx={{ fontSize: { xs: 32, md: 40 } }} />
                             </IconButton>
                           </Box>
-                        </Grid>
-                        <Grid item xs={12} md={6}>
-                          <Box sx={{ p: { xs: 3, md: 6 }, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                            <Box sx={{ mb: 2 }}>
+                        </Box>
+
+                        {/* Content Section */}
+                        <Box 
+                          sx={{ 
+                            flex: '0 0 40%',
+                            p: { xs: 3, md: 4 },
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'center',
+                            position: 'relative'
+                          }}
+                        >
+                          <Box sx={{ mb: 3 }}>
+                            <Box sx={{ display: 'flex', gap: 1, mb: 2, flexWrap: 'wrap' }}>
+                              <Chip
+                                label={featuredProjects[currentSlide]?.category}
+                                size="small"
+                                sx={{
+                                  background: alpha(theme.palette.primary.main, 0.1),
+                                  color: theme.palette.primary.main,
+                                  fontWeight: 500,
+                                }}
+                              />
                               <Chip
                                 label={featuredProjects[currentSlide]?.status}
                                 color={featuredProjects[currentSlide]?.status === 'Live' ? 'success' : 'warning'}
                                 size="small"
-                                sx={{ mb: 2 }}
                               />
-                              <Typography variant="h4" sx={{ fontWeight: 700, mb: 2 }}>
-                                {featuredProjects[currentSlide]?.title}
-                              </Typography>
                             </Box>
-                            <Typography
-                              variant="body1"
-                              color="text.secondary"
-                              sx={{ mb: 3, lineHeight: 1.6 }}
+                            <Typography 
+                              variant="h3" 
+                              sx={{ 
+                                fontWeight: 700,
+                                mb: 2,
+                                fontSize: { xs: '1.75rem', md: '2.25rem' }
+                              }}
                             >
-                              {featuredProjects[currentSlide]?.description}
+                              {featuredProjects[currentSlide]?.title}
                             </Typography>
-                            <Box sx={{ mb: 3 }}>
-                              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                                {featuredProjects[currentSlide]?.technologies.slice(0, 4).map((tech, index) => (
-                                  <Chip
-                                    key={index}
-                                    label={tech}
-                                    size="small"
-                                    variant="outlined"
-                                    sx={{
-                                      borderColor: alpha(theme.palette.primary.main, 0.3),
-                                      color: theme.palette.primary.main,
-                                    }}
-                                  />
-                                ))}
-                              </Box>
-                            </Box>
-                            <Box sx={{ display: 'flex', gap: 2, mt: 'auto' }}>
-                              <Button
-                                variant="contained"
-                                endIcon={<ArrowForwardIcon />}
-                                onClick={() => handleViewProject(featuredProjects[currentSlide]?.slug)}
-                                onMouseEnter={() => onCursorChange?.('button')}
-                                onMouseLeave={() => onCursorChange?.('default')}
-                                sx={{ borderRadius: 3 }}
-                              >
-                                View Project
-                              </Button>
-                              <Button
-                                variant="outlined"
-                                endIcon={<LaunchIcon />}
-                                href={featuredProjects[currentSlide]?.liveUrl}
-                                target="_blank"
-                                onMouseEnter={() => onCursorChange?.('button')}
-                                onMouseLeave={() => onCursorChange?.('default')}
-                                sx={{ borderRadius: 3 }}
-                              >
-                                Live Demo
-                              </Button>
+                          </Box>
+
+                          <Typography
+                            variant="body1"
+                            color="text.secondary"
+                            sx={{ 
+                              mb: 3,
+                              lineHeight: 1.8,
+                              fontSize: { xs: '0.9rem', md: '1rem' },
+                              maxWidth: '100%'
+                            }}
+                          >
+                            {featuredProjects[currentSlide]?.description}
+                          </Typography>
+
+                          <Box sx={{ mb: 4 }}>
+                            <Typography variant="subtitle2" sx={{ mb: 1.5, color: 'text.secondary' }}>
+                              Technologies Used:
+                            </Typography>
+                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                              {featuredProjects[currentSlide]?.technologies.map((tech, index) => (
+                                <Chip
+                                  key={index}
+                                  label={tech}
+                                  size="small"
+                                  variant="outlined"
+                                  sx={{
+                                    borderColor: alpha(theme.palette.primary.main, 0.3),
+                                    color: theme.palette.primary.main,
+                                    fontSize: '0.75rem',
+                                  }}
+                                />
+                              ))}
                             </Box>
                           </Box>
-                        </Grid>
-                      </div>
+
+                          <Box 
+                            sx={{ 
+                              display: 'flex', 
+                              gap: 2,
+                              mt: 'auto',
+                              flexWrap: { xs: 'wrap', sm: 'nowrap' }
+                            }}
+                          >
+                            <Button
+                              fullWidth
+                              variant="contained"
+                              endIcon={<ArrowForwardIcon />}
+                              onClick={() => handleViewProject(featuredProjects[currentSlide]?.slug)}
+                              sx={{
+                                py: 1.5,
+                                borderRadius: 2,
+                              }}
+                            >
+                              View Project
+                            </Button>
+                            <Button
+                              fullWidth
+                              variant="outlined"
+                              endIcon={<LaunchIcon />}
+                              href={featuredProjects[currentSlide]?.liveUrl}
+                              target="_blank"
+                              sx={{
+                                py: 1.5,
+                                borderRadius: 2,
+                              }}
+                            >
+                              Live Demo
+                            </Button>
+                          </Box>
+                        </Box>
+                      </Box>
                     </motion.div>
                   </AnimatePresence>
 
-                  {/* Carousel Controls */}
+                  {/* Navigation Controls */}
                   {featuredProjects.length > 1 && (
                     <>
                       <IconButton
                         onClick={prevSlide}
                         sx={{
                           position: 'absolute',
-                          left: 16,
+                          left: { xs: 8, md: 16 },
                           top: '50%',
                           transform: 'translateY(-50%)',
-                          background: alpha(theme.palette.background.paper, 0.8),
-                          '&:hover': { background: theme.palette.background.paper },
+                          background: alpha(theme.palette.background.paper, 0.9),
+                          backdropFilter: 'blur(8px)',
+                          zIndex: 2,
+                          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', // Smoother transition
+                          '&:hover': { 
+                            background: theme.palette.background.paper,
+                            transform: 'translateY(-50%) scale(1.1)',
+                          },
                         }}
                       >
                         <ChevronLeftIcon />
@@ -490,44 +565,19 @@ const ProjectsShowcase = ({ themeMode, onCursorChange, limit = null, showHeader 
                         onClick={nextSlide}
                         sx={{
                           position: 'absolute',
-                          right: 16,
+                          right: { xs: 8, md: 16 },
                           top: '50%',
                           transform: 'translateY(-50%)',
-                          background: alpha(theme.palette.background.paper, 0.8),
-                          '&:hover': { background: theme.palette.background.paper },
+                          background: alpha(theme.palette.background.paper, 0.9),
+                          backdropFilter: 'blur(8px)',
+                          zIndex: 2,
+                          '&:hover': { 
+                            background: theme.palette.background.paper,
+                          },
                         }}
                       >
                         <ChevronRightIcon />
                       </IconButton>
-
-                      {/* Dots Indicator */}
-                      <Box
-                        sx={{
-                          position: 'absolute',
-                          bottom: 16,
-                          left: '50%',
-                          transform: 'translateX(-50%)',
-                          display: 'flex',
-                          gap: 1,
-                        }}
-                      >
-                        {featuredProjects.map((_, index) => (
-                          <Box
-                            key={index}
-                            onClick={() => setCurrentSlide(index)}
-                            sx={{
-                              width: 12,
-                              height: 12,
-                              borderRadius: '50%',
-                              background: index === currentSlide
-                                ? theme.palette.primary.main
-                                : alpha(theme.palette.common.white, 0.5),
-                              cursor: 'pointer',
-                              transition: 'all 0.3s ease',
-                            }}
-                          />
-                        ))}
-                      </Box>
                     </>
                   )}
                 </Box>
@@ -566,7 +616,6 @@ const ProjectsShowcase = ({ themeMode, onCursorChange, limit = null, showHeader 
                     <Card
                       sx={{
                         width: "100%",
-                        maxWidth: 420, // Ensure card doesn't stretch too wide
                         height: '100%',
                         display: 'flex',
                         flexDirection: 'column',
@@ -574,82 +623,127 @@ const ProjectsShowcase = ({ themeMode, onCursorChange, limit = null, showHeader 
                           ? 'linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%)'
                           : 'linear-gradient(135deg, #ffffff 0%, #f7fafc 100%)',
                         border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
-                        borderRadius: 3,
+                        borderRadius: '16px',
                         overflow: 'hidden',
-                        transition: 'all 0.3s ease',
+                        transition: 'all 0.4s ease',
                         transform: hoveredCard === project.id ? 'translateY(-8px)' : 'translateY(0)',
-                        boxShadow: hoveredCard === project.id ? theme.shadows[16] : theme.shadows[4],
+                        boxShadow: hoveredCard === project.id 
+                          ? `0 22px 40px ${alpha(theme.palette.common.black, 0.15)}`
+                          : `0 6px 12px ${alpha(theme.palette.common.black, 0.08)}`,
                       }}
                     >
                       <Box sx={{ position: 'relative' }}>
                         <CardMedia
                           component="img"
-                          height="240"
+                          height="220"
                           image={project.image}
                           alt={project.title}
                           sx={{
-                            transition: 'transform 0.3s ease',
+                            transition: 'all 0.5s ease',
                             transform: hoveredCard === project.id ? 'scale(1.05)' : 'scale(1)',
+                            '&::after': {
+                              content: '""',
+                              position: 'absolute',
+                              top: 0,
+                              left: 0,
+                              width: '100%',
+                              height: '100%',
+                              background: 'linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.4) 100%)',
+                            }
                           }}
                         />
                         <Box
                           sx={{
                             position: 'absolute',
-                            top: 12,
-                            right: 12,
+                            top: 16,
+                            right: 16,
                             display: 'flex',
                             gap: 1,
+                            zIndex: 2,
                           }}
                         >
                           <Chip
                             label={project.category}
                             size="small"
                             sx={{
-                              background: alpha(theme.palette.primary.main, 0.1),
+                              background: alpha(theme.palette.background.paper, 0.9),
                               color: theme.palette.primary.main,
-                              border: `1px solid ${alpha(theme.palette.primary.main, 0.3)}`,
+                              fontWeight: 500,
+                              backdropFilter: 'blur(8px)',
+                              '& .MuiChip-label': {
+                                px: 1.5,
+                              }
                             }}
                           />
                         </Box>
-                        <IconButton
-                          onClick={() => handleVideoPlay(project.videoUrl, project.liveUrl)}
-                          sx={{
-                            position: 'absolute',
-                            top: '50%',
-                            left: '50%',
-                            transform: 'translate(-50%, -50%)',
-                            background: alpha(theme.palette.primary.main, 0.8),
-                            color: 'white',
-                            opacity: hoveredCard === project.id ? 1 : 0,
-                            transition: 'all 0.3s ease',
-                            '&:hover': {
-                              background: theme.palette.primary.main,
-                              transform: 'translate(-50%, -50%) scale(1.1)',
-                            },
+                      </Box>
+
+                      <CardContent 
+                        sx={{ 
+                          flexGrow: 1, 
+                          p: 3,
+                          pb: 2,
+                        }}
+                      >
+                        <Box 
+                          sx={{ 
+                            display: 'flex', 
+                            justifyContent: 'space-between', 
+                            alignItems: 'flex-start', 
+                            mb: 2 
                           }}
                         >
-                          <PlayIcon />
-                        </IconButton>
-                      </Box>
-                      <CardContent sx={{ flexGrow: 1, p: 3 }}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
-                          <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
+                          <Typography 
+                            variant="h6" 
+                            sx={{ 
+                              fontWeight: 700,
+                              fontSize: '1.25rem',
+                              lineHeight: 1.3,
+                              mb: 0.5,
+                              color: theme.palette.text.primary
+                            }}
+                          >
                             {project.title}
                           </Typography>
                           <Chip
                             label={project.status}
                             size="small"
                             color={project.status === 'Live' ? 'success' : 'warning'}
+                            sx={{
+                              height: '24px',
+                              '& .MuiChip-label': {
+                                px: 1,
+                                fontSize: '0.75rem',
+                                fontWeight: 500
+                              }
+                            }}
                           />
                         </Box>
+
                         <Typography
                           variant="body2"
-                          color="text.secondary"
-                          sx={{ mb: 2, lineHeight: 1.5 }}
+                          sx={{
+                            mb: 2.5,
+                            color: alpha(theme.palette.text.primary, 0.7),
+                            lineHeight: 1.6,
+                            height: '4.8em',
+                            overflow: 'hidden',
+                            display: '-webkit-box',
+                            WebkitLineClamp: 3,
+                            WebkitBoxOrient: 'vertical',
+                          }}
                         >
                           {project.description}
                         </Typography>
-                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 2 }}>
+
+                        <Box 
+                          sx={{ 
+                            display: 'flex', 
+                            flexWrap: 'wrap', 
+                            gap: 0.75,
+                            mb: 2.5
+                          }}
+                        >
                           {project.technologies.slice(0, 3).map((tech, techIndex) => (
                             <Chip
                               key={techIndex}
@@ -657,15 +751,27 @@ const ProjectsShowcase = ({ themeMode, onCursorChange, limit = null, showHeader 
                               size="small"
                               variant="outlined"
                               sx={{
-                                fontSize: '0.7rem',
-                                height: 24,
-                                borderColor: alpha(theme.palette.text.secondary, 0.3),
+                                fontSize: '0.75rem',
+                                height: '24px',
+                                borderColor: alpha(theme.palette.text.primary, 0.15),
+                                color: alpha(theme.palette.text.primary, 0.75),
+                                '&:hover': {
+                                  borderColor: theme.palette.primary.main,
+                                  color: theme.palette.primary.main,
+                                }
                               }}
                             />
                           ))}
                         </Box>
                       </CardContent>
-                      <CardActions sx={{ p: 3, pt: 0 }}>
+
+                      <CardActions 
+                        sx={{ 
+                          p: 3, 
+                          pt: 0,
+                          gap: 1.5
+                        }}
+                      >
                         <Button
                           size="small"
                           variant="contained"
@@ -673,7 +779,18 @@ const ProjectsShowcase = ({ themeMode, onCursorChange, limit = null, showHeader 
                           onClick={() => handleViewProject(project.slug)}
                           onMouseEnter={() => onCursorChange?.('button')}
                           onMouseLeave={() => onCursorChange?.('default')}
-                          sx={{ borderRadius: 2, mr: 1 }}
+                          sx={{
+                            borderRadius: '8px',
+                            textTransform: 'none',
+                            px: 2,
+                            py: 0.75,
+                            fontSize: '0.875rem',
+                            fontWeight: 500,
+                            boxShadow: 'none',
+                            '&:hover': {
+                              boxShadow: `0 4px 8px ${alpha(theme.palette.primary.main, 0.25)}`,
+                            }
+                          }}
                         >
                           View Details
                         </Button>
@@ -685,7 +802,19 @@ const ProjectsShowcase = ({ themeMode, onCursorChange, limit = null, showHeader 
                           target="_blank"
                           onMouseEnter={() => onCursorChange?.('button')}
                           onMouseLeave={() => onCursorChange?.('default')}
-                          sx={{ borderRadius: 2 }}
+                          sx={{
+                            borderRadius: '8px',
+                            textTransform: 'none',
+                            px: 2,
+                            py: 0.75,
+                            fontSize: '0.875rem',
+                            fontWeight: 500,
+                            borderColor: alpha(theme.palette.primary.main, 0.5),
+                            '&:hover': {
+                              borderColor: theme.palette.primary.main,
+                              background: alpha(theme.palette.primary.main, 0.04),
+                            }
+                          }}
                         >
                           Live Demo
                         </Button>
